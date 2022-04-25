@@ -1,0 +1,131 @@
+definitions:
+  post.CreateRepostIntent:
+    properties:
+      parent_id:
+        type: string
+      quote:
+        type: string
+      user_id:
+        type: string
+    type: object
+  post.UserPost:
+    properties:
+      post: {}
+      user:
+        $ref: '#/definitions/user.User'
+    type: object
+  timeline.FollowingResponse:
+    properties:
+      posts:
+        items:
+          $ref: '#/definitions/post.UserPost'
+        type: array
+    type: object
+  user.User:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:3010
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server Petstore server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /follow:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: user_id
+        in: body
+        name: user_id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/timeline.FollowingResponse'
+      summary: Starts to follow an user
+      tags:
+      - follow
+  /post:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new post using the user id
+      parameters:
+      - description: user_id
+        in: body
+        name: user_id
+        required: true
+        schema:
+          type: string
+      - description: content
+        in: body
+        name: content
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Creates a new post
+      tags:
+      - post
+  /repost:
+    post:
+      consumes:
+      - application/json
+      description: Creates a respost from a post
+      parameters:
+      - description: post
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/post.CreateRepostIntent'
+      produces:
+      - application/json
+      responses: {}
+      summary: Repost a post from someone
+      tags:
+      - repost
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: creates a new user which is required to use all other resources
+      parameters:
+      - description: username
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+      summary: Create a user
+      tags:
+      - users
+swagger: "2.0"

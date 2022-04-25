@@ -16,7 +16,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 
-	_ "gosocialgraph/cmd/docs"
+	_ "gosocialgraph/docs"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -120,7 +120,7 @@ func main() {
 
 	context.Router.HandleFunc("/user", context.CreateUserHandler).Methods("POST")
 	context.Router.HandleFunc("/profile/{user_id}", context.ProfileHandler).Methods("GET")
-	context.Router.HandleFunc("/tweet", context.PostHandler).Methods("POST")
+	context.Router.HandleFunc("/post", context.PostHandler).Methods("POST")
 	context.Router.HandleFunc("/repost", context.RepostHandler).Methods("POST")
 	context.Router.HandleFunc("/follow", context.FollowHandler).Methods("POST")
 	context.Router.HandleFunc("/unfollow", context.UnfollowHandler).Methods("DELETE")
@@ -137,6 +137,16 @@ func main() {
 	fmt.Println("We are online! Running on 0.0.0.0:3010")
 }
 
+// RepostHandler godoc
+// @Summary      Repost a post from someone
+// @Description  Creates a respost from a post
+// @Tags         repost
+// @Accept       json
+// @Produce      json
+// @Param        user_id body string true "user_id"
+// @Param        parent_id body string true "parent_id"
+// @Param        quote body string false "string"
+// @Router       /repost [post]
 func (context AppContext) RepostHandler(w http.ResponseWriter, r *http.Request) {
 	var intent post.CreateRepostIntent
 
@@ -154,6 +164,15 @@ func (context AppContext) RepostHandler(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+// PostHandler godoc
+// @Summary      Creates a new post
+// @Description  Creates a new post using the user id
+// @Tags         post
+// @Accept       json
+// @Produce      json
+// @Param        user_id body string true "user_id"
+// @Param        content body string true "content"
+// @Router       /post [post]
 func (context AppContext) PostHandler(w http.ResponseWriter, r *http.Request) {
 	var intentToValidate post.CreatePostIntent
 
@@ -178,6 +197,14 @@ func (context AppContext) PostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// FollowingHandler godoc
+// @Summary      Starts to follow an user
+// @Tags         follow
+// @Accept       json
+// @Produce      json
+// @Param        user_id body string true "user_id"
+// @Success 	 200 {object} timeline.FollowingResponse
+// @Router       /follow [post]
 func (context AppContext) FollowingHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	intent := timeline.FollowingIntent{
@@ -264,6 +291,7 @@ func (context AppContext) ProfileHandler(w http.ResponseWriter, r *http.Request)
 // @Accept       json
 // @Produce      json
 // @Param        username query string true "username"
+// @Success     200 {object} user.User
 // @Router       /user [post]
 func (context AppContext) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
