@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  api:
+    build: .
+    ports:
+      - "3010:3010"
+    links:
+      - db
+    depends_on: 
+      - db
+    environment:
+      - NEO4J_HOST=bolt://db
+      - NEO4J_USERNAME=neo4j
+      - NEO4J_PASSWORD=strongpassword
+
+  db:
+    image: neo4j:latest
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    environment:
+      - NEO4J_AUTH=neo4j/strongpassword
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
