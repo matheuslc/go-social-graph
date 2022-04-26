@@ -7,28 +7,55 @@ import (
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 )
 
-type UserRepository struct {
+// Repository defines the Graph implementation of UserRepository
+type Repository struct {
 	Client neo4j.Driver
 }
 
+// Reader defines a unit for finding an user
 type Reader interface {
-	Find(userId string) (User, error)
+	Find(userID string) (User, error)
+	FindByUsername(username string) (bool, error)
 }
 
-type Writer interface {
-	Create(username string) (User, error)
-	Follow(to, from string) (bool, error)
+// Follower defines functions a follower must implement
+type Follower interface {
+	Follow(from, to string) (bool, error)
+}
+
+// Unfollower defines the small unit that needs to unfollow someone
+type Unfollower interface {
 	Unfollow(to, from string) (bool, error)
 }
 
-type Stats interface {
+// Creater defines how to create a new user
+type Creater interface {
+	Create(username string) (User, error)
+}
+
+// Writer compouns a write-only functions interface
+type Writer interface {
+	Creater
+	Follower
+	Unfollower
+}
+
+// ReaderWriter groups reads and writes function
+type ReaderWriter interface {
+	Creater
+	Reader
+}
+
+type StatsCounter interface {
 	CountFollowing(userId string) (int64, error)
 	CountFollowers(userId string) (int64, error)
 	CountPosts(userId string) (int64, error)
 }
 
-func (repo UserRepository) Find(userId string) (User, error) {
-	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+type UserNotFoundError error
+
+func (repo *Repository) Find(userID string) (User, error) {
+	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	if err != nil {
 		return User{}, err
 	}
@@ -39,7 +66,7 @@ func (repo UserRepository) Find(userId string) (User, error) {
 		result, err := transaction.Run(
 			"MATCH (a:User { uuid: $userId }) RETURN a LIMIT 1",
 			map[string]interface{}{
-				"userId": userId,
+				"userId": userID,
 			},
 		)
 
@@ -50,7 +77,7 @@ func (repo UserRepository) Find(userId string) (User, error) {
 		if result.Next() {
 			userProps := result.Record().GetByIndex(0).(neo4j.Node).Props()
 			return User{
-				Id:        uuid.MustParse(userProps["uuid"].(string)),
+				ID:        uuid.MustParse(userProps["uuid"].(string)),
 				Username:  userProps["username"].(string),
 				CreatedAt: userProps["created_at"].(time.Time),
 			}, nil
@@ -59,14 +86,48 @@ func (repo UserRepository) Find(userId string) (User, error) {
 		return nil, result.Err()
 	})
 
-	if err != nil {
+	if err != nil || persistedUser == nil {
 		return User{}, err
 	}
 
 	return persistedUser.(User), nil
 }
 
-func (repo UserRepository) Follow(to, from string) (bool, error) {
+func (repo *Repository) FindByUsername(username string) (bool, error) {
+	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	if err != nil {
+		return false, err
+	}
+
+	defer session.Close()
+
+	persistedUser, err := session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(
+			"MATCH (a:User { username: $username }) RETURN a",
+			map[string]interface{}{
+				"username": username,
+			},
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		if result.Next() {
+			return true, nil
+		}
+
+		return nil, result.Err()
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	return persistedUser.(bool), nil
+}
+
+func (repo *Repository) Follow(to, from string) (bool, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return false, err
@@ -101,7 +162,7 @@ func (repo UserRepository) Follow(to, from string) (bool, error) {
 	return true, nil
 }
 
-func (repo UserRepository) Unfollow(to, from string) (bool, error) {
+func (repo *Repository) Unfollow(to, from string) (bool, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return false, err
@@ -136,7 +197,7 @@ func (repo UserRepository) Unfollow(to, from string) (bool, error) {
 	return true, nil
 }
 
-func (repo UserRepository) Create(username string) (User, error) {
+func (repo *Repository) Create(username string) (User, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return User{}, err
@@ -159,7 +220,7 @@ func (repo UserRepository) Create(username string) (User, error) {
 
 		if result.Next() {
 			return User{
-				Id:       uuid.MustParse(result.Record().GetByIndex(0).(string)),
+				ID:       uuid.MustParse(result.Record().GetByIndex(0).(string)),
 				Username: result.Record().GetByIndex(1).(string),
 			}, nil
 		}
@@ -174,7 +235,7 @@ func (repo UserRepository) Create(username string) (User, error) {
 	return persistedUser.(User), nil
 }
 
-func (repo UserRepository) CountFollowing(userId string) (int64, error) {
+func (repo *Repository) CountFollowing(userId string) (int64, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return 0, err
@@ -208,7 +269,7 @@ func (repo UserRepository) CountFollowing(userId string) (int64, error) {
 	return count.(int64), nil
 }
 
-func (repo UserRepository) CountFollowers(userId string) (int64, error) {
+func (repo *Repository) CountFollowers(userId string) (int64, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return 0, err
@@ -242,7 +303,7 @@ func (repo UserRepository) CountFollowers(userId string) (int64, error) {
 	return count.(int64), nil
 }
 
-func (repo UserRepository) CountPosts(userId string) (int64, error) {
+func (repo *Repository) CountPosts(userId string) (int64, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return 0, err

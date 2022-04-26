@@ -7,20 +7,27 @@ import (
 )
 
 type StatsService struct {
-	Repository Stats
+	Repository StatsCounter
 }
 
 type StatsIntent struct {
 	UserId uuid.UUID `json:"user_id"`
 }
 
-type StatsResponse struct {
-	UserStats `json:"user_stats"`
+// Stats groups structs related to user stats
+type Stats struct {
+	Followers  int `json:"followers"`
+	Following  int `json:"following"`
+	PostsCount int `json:"posts_count"`
 }
 
-func (sv StatsService) Run(intent StatsIntent) (UserStats, error) {
+type StatsResponse struct {
+	Stats `json:"user_stats"`
+}
+
+func (sv *StatsService) Run(intent StatsIntent) (Stats, error) {
 	var wg sync.WaitGroup
-	var userStats UserStats
+	var userStats Stats
 	var runningErros []error
 
 	wg.Add(3)
@@ -61,7 +68,7 @@ func (sv StatsService) Run(intent StatsIntent) (UserStats, error) {
 	wg.Wait()
 
 	if len(runningErros) > 0 {
-		return UserStats{}, runningErros[0]
+		return Stats{}, runningErros[0]
 	}
 
 	return userStats, nil

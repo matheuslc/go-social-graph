@@ -11,9 +11,9 @@ type ProfileIntent struct {
 }
 
 type ProfileResponse struct {
-	User      user.User        `json:"user"`
-	UserStats user.UserStats   `json:"stats"`
-	Posts     UserPostResponse `json:"posts"`
+	User  user.User        `json:"user"`
+	Stats user.Stats       `json:"stats"`
+	Posts UserPostResponse `json:"posts"`
 }
 
 type ProfileService struct {
@@ -40,8 +40,8 @@ func (sv ProfileService) Run(intent ProfileIntent) (ProfileResponse, error) {
 	}
 
 	return ProfileResponse{
-		User:      userFound.User,
-		UserStats: stats,
-		Posts:     posts,
+		User:  userFound.User,
+		Stats: stats,
+		Posts: posts,
 	}, nil
 }

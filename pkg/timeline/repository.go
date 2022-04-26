@@ -144,7 +144,7 @@ func dataMapper(result neo4j.Result) ([]post.UserPost, error) {
 
 		userProps := userRecord.Props()
 		postIsFrom := user.User{
-			Id:       uuid.MustParse(userProps["uuid"].(string)),
+			ID:       uuid.MustParse(userProps["uuid"].(string)),
 			Username: userProps["username"].(string),
 		}
 
@@ -162,7 +162,7 @@ func dataMapper(result neo4j.Result) ([]post.UserPost, error) {
 			userRepostProps := userRepost.Props()
 			repostWithUser := post.UserPost{
 				User: user.User{
-					Id:       uuid.MustParse(userRepostProps["uuid"].(string)),
+					ID:       uuid.MustParse(userRepostProps["uuid"].(string)),
 					Username: userRepostProps["username"].(string),
 				},
 				Post: parsedPost,

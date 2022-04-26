@@ -1,25 +1,28 @@
 package user
 
 import (
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-const USERNAME_MAX_LENGTH = 14
+// UsernameMaxLength defines the maximum characters an username may have
+// It can be extracted to an environment variable
+const UsernameMaxLength = 14
 
+// User defines the fields that makes something looks like a user
 type User struct {
-	Id        uuid.UUID `json:"id"`
+	ID        uuid.UUID `json:"id"`
 	Username  string    `json:"username"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type UserStats struct {
-	Followers  int `json:"followers"`
-	Following  int `json:"following"`
-	PostsCount int `json:"posts_count"`
-}
+// NewUser creates a new valid user
+func NewUser(username string) (User, error) {
+	if len(username) > UsernameMaxLength {
+		return User{}, errors.New("Username is bigger than allowed. Maximum lenght: %")
+	}
 
-type Follower interface {
-	Follow(from User, to User) (bool, error)
+	return User{Username: username}, nil
 }

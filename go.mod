@@ -10,6 +10,7 @@ require (
 	github.com/go-openapi/swag v0.21.1 // indirect
 	github.com/go-playground/validator/v10 v10.10.1 // indirect
 	github.com/go-swagger/go-swagger v0.28.0 // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/neo4j/neo4j-go-driver v1.8.3 // indirect

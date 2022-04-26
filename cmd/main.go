@@ -10,6 +10,7 @@ import (
 	p "gosocialgraph/pkg/persistence"
 	"gosocialgraph/pkg/post"
 	"gosocialgraph/pkg/timeline"
+	"gosocialgraph/pkg/usecase"
 	"gosocialgraph/pkg/user"
 
 	"github.com/google/uuid"
@@ -26,15 +27,16 @@ type AppContext struct {
 	Router *mux.Router
 	Graph  *p.Graph
 
-	FindUserService *user.FindUserService
-	UserRepository  *user.UserRepository
-	StatsService    *user.StatsService
+	FindUserService   *user.FindUserService
+	CreateUserService *usecase.CreateUserService
+	UserRepository    *user.Repository
+	StatsService      *user.StatsService
 
 	AllService       *timeline.AllService
 	FollowingService *timeline.FollowingService
 	ProfileService   *timeline.ProfileService
 
-	FollowService   *user.FollowService
+	FollowService   *usecase.FollowService
 	UnfollowService *user.UnfollowService
 
 	PostService   *post.PostService
@@ -42,13 +44,17 @@ type AppContext struct {
 }
 
 func NewAppContext() AppContext {
+	fmt.Println(os.Getenv("NEO4J_HOST"))
+	fmt.Println(os.Getenv("NEO4J_USERNAME"))
+	fmt.Println(os.Getenv("NEO4J_PASSWORD"))
+
 	db, err := p.New(os.Getenv("NEO4J_HOST"), os.Getenv("NEO4J_USERNAME"), os.Getenv("NEO4J_PASSWORD"))
 	if err != nil {
 		fmt.Printf("Can't connect to neo4j. Reason: %s", err)
 	}
 
 	r := mux.NewRouter()
-	userRepository := user.UserRepository{
+	userRepository := user.Repository{
 		Client: db,
 	}
 
@@ -79,6 +85,9 @@ func NewAppContext() AppContext {
 				Repository: &timelineRepository,
 			},
 		},
+		CreateUserService: &usecase.CreateUserService{
+			UserRepository: &userRepository,
+		},
 		AllService: &timeline.AllService{
 			Repository: &timelineRepository,
 		},
@@ -86,7 +95,7 @@ func NewAppContext() AppContext {
 			Repository: &timelineRepository,
 		},
 
-		FollowService: &user.FollowService{
+		FollowService: &usecase.FollowService{
 			UserRepository: &userRepository,
 		},
 		UnfollowService: &user.UnfollowService{
@@ -231,7 +240,7 @@ func (context AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (context AppContext) FollowHandler(w http.ResponseWriter, r *http.Request) {
-	var invalidIntent user.FollowIntent
+	var invalidIntent usecase.FollowIntent
 
 	err := json.NewDecoder(r.Body).Decode(&invalidIntent)
 	if err != nil {
@@ -239,7 +248,7 @@ func (context AppContext) FollowHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	intent, err := user.NewFollowIntent(invalidIntent.To, invalidIntent.From)
+	intent, err := usecase.NewFollowIntent(invalidIntent.To, invalidIntent.From)
 
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
@@ -297,9 +306,13 @@ func (context AppContext) CreateUserHandler(w http.ResponseWriter, r *http.Reque
 	username := r.FormValue("username")
 	w.WriteHeader(http.StatusOK)
 
-	persistedUser, err := context.UserRepository.Create(username)
+	intent := usecase.CreateUserIntent{
+		Username: username,
+	}
+
+	persistedUser, err := context.CreateUserService.Run(intent)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Could not create a new user")
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 	} else {
 		respondWithJSON(w, http.StatusOK, persistedUser)
 	}
