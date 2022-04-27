@@ -18,17 +18,17 @@ type AppContext struct {
 	Router *mux.Router
 	Graph  *p.Graph
 
-	FindUserService   *user.FindUserService
+	FindUserService   *usecase.FindUserService
 	CreateUserService *usecase.CreateUserService
 	UserRepository    *user.Repository
-	StatsService      *user.StatsService
+	StatsService      *usecase.StatsService
 
 	AllService       *timeline.AllService
 	FollowingService *timeline.FollowingService
 	ProfileService   *timeline.ProfileService
 
 	FollowService   *usecase.FollowService
-	UnfollowService *user.UnfollowService
+	UnfollowService *usecase.UnfollowService
 
 	PostService   *post.PostService
 	RepostService *post.RepostService

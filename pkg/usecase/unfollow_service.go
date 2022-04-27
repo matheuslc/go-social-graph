@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"gosocialgraph/pkg/user"
 
 	"github.com/google/uuid"
@@ -20,4 +21,13 @@ type UnfollowService struct {
 // Run executes the use case
 func (sv UnfollowService) Run(intent UnfollowIntent) (bool, error) {
 	return sv.Repository.Unfollow(intent.To.String(), intent.From.String())
+}
+
+// NewUnfollowIntent validades and create a new unfollow intent
+func NewUnfollowIntent(to, from uuid.UUID) (UnfollowIntent, error) {
+	if to == from {
+		return UnfollowIntent{}, errors.New("Can't unfollow yourself")
+	}
+
+	return UnfollowIntent{To: to, From: from}, nil
 }

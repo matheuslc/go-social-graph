@@ -161,6 +161,7 @@ func (repo *Repository) Follow(to, from string) (bool, error) {
 	return true, nil
 }
 
+// Unfollow
 func (repo *Repository) Unfollow(to, from string) (bool, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
