@@ -46,13 +46,12 @@ type ReaderWriter interface {
 	Reader
 }
 
-type StatsCounter interface {
-	CountFollowing(userId string) (int64, error)
-	CountFollowers(userId string) (int64, error)
-	CountPosts(userId string) (int64, error)
+// Stats defines the methods needed to get user related stats
+type Stats interface {
+	CountFollowing(userID string) (int64, error)
+	CountFollowers(userID string) (int64, error)
+	CountPosts(userID string) (int64, error)
 }
-
-type UserNotFoundError error
 
 func (repo *Repository) Find(userID string) (User, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})

@@ -62,14 +62,14 @@ func NewAppContext() AppContext {
 		Router:         r,
 		Graph:          &p.Graph{Client: db},
 		UserRepository: &userRepository,
-		StatsService: &user.StatsService{
+		StatsService: &usecase.StatsService{
 			Repository: &userRepository,
 		},
 		ProfileService: &timeline.ProfileService{
-			FindUserService: user.FindUserService{
+			FindUserService: usecase.FindUserService{
 				UserRepository: &userRepository,
 			},
-			StatsService: user.StatsService{
+			StatsService: usecase.StatsService{
 				Repository: &userRepository,
 			},
 			UserPostService: timeline.UserPostService{
@@ -89,8 +89,8 @@ func NewAppContext() AppContext {
 		FollowService: &usecase.FollowService{
 			UserRepository: &userRepository,
 		},
-		UnfollowService: &user.UnfollowService{
-			UserRepository: &userRepository,
+		UnfollowService: &usecase.UnfollowService{
+			Repository: &userRepository,
 		},
 
 		PostService: &post.PostService{

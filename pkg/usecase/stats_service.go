@@ -1,17 +1,20 @@
-package user
+package usecase
 
 import (
+	"gosocialgraph/pkg/user"
 	"sync"
 
 	"github.com/google/uuid"
 )
 
-type StatsService struct {
-	Repository StatsCounter
+// StatsIntent defines what you need to execute the use case
+type StatsIntent struct {
+	UserID uuid.UUID `json:"user_id"`
 }
 
-type StatsIntent struct {
-	UserId uuid.UUID `json:"user_id"`
+// StatsResponse defines the usecase response
+type StatsResponse struct {
+	Stats `json:"user_stats"`
 }
 
 // Stats groups structs related to user stats
@@ -21,11 +24,13 @@ type Stats struct {
 	PostsCount int `json:"posts_count"`
 }
 
-type StatsResponse struct {
-	Stats `json:"user_stats"`
+// StatsService defines the service and its dependencies
+type StatsService struct {
+	Repository user.Stats
 }
 
-func (sv *StatsService) Run(intent StatsIntent) (Stats, error) {
+// Run executes the usecase
+func (sv *StatsService) Run(intent StatsIntent) (StatsResponse, error) {
 	var wg sync.WaitGroup
 	var userStats Stats
 	var runningErros []error
@@ -34,7 +39,7 @@ func (sv *StatsService) Run(intent StatsIntent) (Stats, error) {
 
 	go func() {
 		defer wg.Done()
-		followers, err := sv.Repository.CountFollowers(intent.UserId.String())
+		followers, err := sv.Repository.CountFollowers(intent.UserID.String())
 
 		if err != nil {
 			runningErros = append(runningErros, err)
@@ -45,7 +50,7 @@ func (sv *StatsService) Run(intent StatsIntent) (Stats, error) {
 
 	go func() {
 		defer wg.Done()
-		following, err := sv.Repository.CountFollowing(intent.UserId.String())
+		following, err := sv.Repository.CountFollowing(intent.UserID.String())
 
 		if err != nil {
 			runningErros = append(runningErros, err)
@@ -56,7 +61,7 @@ func (sv *StatsService) Run(intent StatsIntent) (Stats, error) {
 
 	go func() {
 		defer wg.Done()
-		posts, err := sv.Repository.CountPosts(intent.UserId.String())
+		posts, err := sv.Repository.CountPosts(intent.UserID.String())
 
 		if err != nil {
 			runningErros = append(runningErros, err)
@@ -68,8 +73,8 @@ func (sv *StatsService) Run(intent StatsIntent) (Stats, error) {
 	wg.Wait()
 
 	if len(runningErros) > 0 {
-		return Stats{}, runningErros[0]
+		return StatsResponse{}, runningErros[0]
 	}
 
-	return userStats, nil
+	return StatsResponse{Stats: userStats}, nil
 }
