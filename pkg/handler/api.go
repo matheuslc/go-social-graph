@@ -19,7 +19,7 @@ import (
 // @Param        parent_id body string true "parent_id"
 // @Param        quote body string false "string"
 // @Router       /repost [post]
-func (c AppContext) RepostHandler(w http.ResponseWriter, r *http.Request) {
+func (c *AppContext) RepostHandler(w http.ResponseWriter, r *http.Request) {
 	var intent service.CreateRepostIntent
 
 	err := json.NewDecoder(r.Body).Decode(&intent)
@@ -45,7 +45,7 @@ func (c AppContext) RepostHandler(w http.ResponseWriter, r *http.Request) {
 // @Param        user_id body string true "user_id"
 // @Param        content body string true "content"
 // @Router       /post [post]
-func (context *AppContext) PostHandler(w http.ResponseWriter, r *http.Request) {
+func (c *AppContext) PostHandler(w http.ResponseWriter, r *http.Request) {
 	var intentToValidate service.CreatePostIntent
 
 	err := json.NewDecoder(r.Body).Decode(&intentToValidate)
@@ -60,7 +60,7 @@ func (context *AppContext) PostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := context.PostService.Run(intent)
+	response, err := c.PostService.Run(intent)
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Could not create a new post")
@@ -77,13 +77,13 @@ func (context *AppContext) PostHandler(w http.ResponseWriter, r *http.Request) {
 // @Param        user_id body string true "user_id"
 // @Success 	 200 {object} timeline.FollowingResponse
 // @Router       /follow [post]
-func (context AppContext) FollowingHandler(w http.ResponseWriter, r *http.Request) {
+func (c *AppContext) FollowingHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	intent := service.FollowingIntent{
-		UserId: uuid.MustParse(vars["user_id"]),
+		UserID: uuid.MustParse(vars["user_id"]),
 	}
 
-	response, err := context.FollowingService.Run(intent)
+	response, err := c.FollowingService.Run(intent)
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Could not list all posts")
@@ -92,8 +92,8 @@ func (context AppContext) FollowingHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-func (context AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request) {
-	response, err := context.AllService.Run()
+func (c *AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request) {
+	response, err := c.AllService.Run()
 
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Could not list all posts")
@@ -102,7 +102,7 @@ func (context AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request
 	}
 }
 
-func (context AppContext) FollowHandler(w http.ResponseWriter, r *http.Request) {
+func (c *AppContext) FollowHandler(w http.ResponseWriter, r *http.Request) {
 	var invalidIntent service.FollowIntent
 
 	err := json.NewDecoder(r.Body).Decode(&invalidIntent)
@@ -118,7 +118,7 @@ func (context AppContext) FollowHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	response, err := context.FollowService.Run(intent)
+	response, err := c.FollowService.Run(intent)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 	} else {
@@ -126,7 +126,7 @@ func (context AppContext) FollowHandler(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (context AppContext) UnfollowHandler(w http.ResponseWriter, r *http.Request) {
+func (c *AppContext) UnfollowHandler(w http.ResponseWriter, r *http.Request) {
 	var unfollowIntent service.UnfollowIntent
 
 	err := json.NewDecoder(r.Body).Decode(&unfollowIntent)
@@ -134,7 +134,7 @@ func (context AppContext) UnfollowHandler(w http.ResponseWriter, r *http.Request
 		respondWithError(w, http.StatusBadRequest, "Request params are not the expected")
 	}
 
-	_, err = context.UnfollowService.Run(unfollowIntent)
+	_, err = c.UnfollowService.Run(unfollowIntent)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 	} else {
@@ -142,13 +142,13 @@ func (context AppContext) UnfollowHandler(w http.ResponseWriter, r *http.Request
 	}
 }
 
-func (context AppContext) ProfileHandler(w http.ResponseWriter, r *http.Request) {
+func (c *AppContext) ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	intent := service.ProfileIntent{
 		UserID: uuid.MustParse(vars["user_id"]),
 	}
 
-	response, err := context.ProfileService.Run(intent)
+	response, err := c.ProfileService.Run(intent)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 	} else {
@@ -165,7 +165,7 @@ func (context AppContext) ProfileHandler(w http.ResponseWriter, r *http.Request)
 // @Param        username query string true "username"
 // @Success     200 {object} user.User
 // @Router       /user [post]
-func (context AppContext) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
+func (c *AppContext) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	w.WriteHeader(http.StatusOK)
 
@@ -173,7 +173,7 @@ func (context AppContext) CreateUserHandler(w http.ResponseWriter, r *http.Reque
 		Username: username,
 	}
 
-	persistedUser, err := context.CreateUserService.Run(intent)
+	persistedUser, err := c.CreateUserService.Run(intent)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 	} else {

@@ -11,6 +11,7 @@ import (
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 )
 
+// AppContext is the application container, where dependencies are defined
 type AppContext struct {
 	Db     *neo4j.Driver
 	Router *mux.Router
@@ -32,11 +33,8 @@ type AppContext struct {
 	RepostService *service.RepostService
 }
 
+// NewAppContext creates a new AppContext within all dependencies builded
 func NewAppContext() AppContext {
-	fmt.Println(os.Getenv("NEO4J_HOST"))
-	fmt.Println(os.Getenv("NEO4J_USERNAME"))
-	fmt.Println(os.Getenv("NEO4J_PASSWORD"))
-
 	db, err := p.New(os.Getenv("NEO4J_HOST"), os.Getenv("NEO4J_USERNAME"), os.Getenv("NEO4J_PASSWORD"))
 	if err != nil {
 		fmt.Printf("Can't connect to neo4j. Reason: %s", err)

@@ -9,19 +9,23 @@ import (
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 )
 
+// PostWriter defines the contact about how someone can write to storage a post
 type PostWriter interface {
-	Create(userId, content string) (entity.Post, error)
+	Create(userID, content string) (entity.Post, error)
 }
 
+// Reposter defines the contract for how we can repost a post
 type Reposter interface {
-	Repost(user, parentId, quote string) (bool, error)
+	Repost(user, parentID, quote string) (bool, error)
 }
 
+// PostRepository holds the repository dependencies
 type PostRepository struct {
 	Client neo4j.Driver
 }
 
-func (repo *PostRepository) Create(userId, content string) (entity.Post, error) {
+// Create creates a new user post. The content right now is a simple string.
+func (repo *PostRepository) Create(userID, content string) (entity.Post, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return entity.Post{}, fmt.Errorf("could not create a new session for Create query")
@@ -59,7 +63,7 @@ func (repo *PostRepository) Create(userId, content string) (entity.Post, error) 
 		result, err := transaction.Run(
 			"MATCH (a:User), (b:Post) WHERE a.uuid = $userId AND b.uuid = $postId CREATE(a)-[r:TWEET]->(b) CREATE(b)-[own:OWNS]->(a)",
 			map[string]interface{}{
-				"userId": userId,
+				"userId": userID,
 				"postId": persistedPost.(entity.Post).ID.String(),
 			})
 
@@ -81,7 +85,8 @@ func (repo *PostRepository) Create(userId, content string) (entity.Post, error) 
 	return persistedPost.(entity.Post), nil
 }
 
-func (repo *PostRepository) Repost(userId, parentId, quote string) (bool, error) {
+// Repost creates a new post within the original post and more content
+func (repo *PostRepository) Repost(userID, parentID, quote string) (bool, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return false, fmt.Errorf("could not create a new session for Create query")
@@ -92,8 +97,8 @@ func (repo *PostRepository) Repost(userId, parentId, quote string) (bool, error)
 		result, err := transaction.Run(
 			"MATCH (a:User), (b:Post) WHERE a.uuid = $userId AND b.uuid = $postId CREATE(a)-[r:REPOST { uuid: $uuid, created_at: datetime($createdAt), quote: $quote}]->(b)",
 			map[string]interface{}{
-				"userId":    userId,
-				"postId":    parentId,
+				"userId":    userID,
+				"postId":    parentID,
 				"uuid":      uuid.New().String(),
 				"createdAt": time.Now().UTC(),
 				"quote":     quote,
