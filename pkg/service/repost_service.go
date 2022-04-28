@@ -6,26 +6,32 @@ import (
 	"github.com/google/uuid"
 )
 
-type CreateRepostIntent struct {
-	UserId   uuid.UUID `json:"user_id"`
-	ParentId uuid.UUID `json:"parent_id"`
-	Quote    string    `json:"quote"`
+// RepostIntent defines the input the use case expect to run
+type RepostIntent struct {
+	UserID       uuid.UUID `json:"user_id"`
+	ParentPostID uuid.UUID `json:"parent_id"`
+	Quote        string    `json:"quote"`
 }
 
-type CreateRepostResponse struct {
-	Id uuid.UUID `json:"id"`
+// RepostResponse defines the output for the usecase
+type RepostResponse struct {
+	Status bool `json:"status"`
 }
 
+// RepostService holds the structure and its dependencies
 type RepostService struct {
 	Repository repository.Reposter
 }
 
-func (sv RepostService) Run(intent CreateRepostIntent) (bool, error) {
-	ok, err := sv.Repository.Repost(intent.UserId.String(), intent.ParentId.String(), intent.Quote)
+// RepostRunner defines the signature to run this service
+type RepostRunner interface {
+	Run(intent RepostIntent) (bool, error)
+}
 
-	if err != nil {
-		return ok, err
-	}
+// Run executes the usecase
+func (sv RepostService) Run(intent RepostIntent) (RepostResponse, error) {
+	ok, err := sv.Repository.Repost(intent.UserID.String(), intent.ParentPostID.String(), intent.Quote)
+	response := RepostResponse{Status: ok}
 
-	return ok, nil
+	return response, err
 }

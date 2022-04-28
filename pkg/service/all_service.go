@@ -15,6 +15,11 @@ type AllPostResponse struct {
 	Posts []entity.UserPost `json:"posts"`
 }
 
+// AllPostRunner defines the contract for the service runner
+type AllPostRunner interface {
+	Run() (AllPostResponse, error)
+}
+
 // Run defines how the usecase can be executed
 func (sv AllService) Run() (AllPostResponse, error) {
 	response, err := sv.Repository.All()

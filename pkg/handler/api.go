@@ -20,7 +20,7 @@ import (
 // @Param        quote body string false "string"
 // @Router       /repost [post]
 func (c *AppContext) RepostHandler(w http.ResponseWriter, r *http.Request) {
-	var intent service.CreateRepostIntent
+	var intent service.CreatePostIntent
 
 	err := json.NewDecoder(r.Body).Decode(&intent)
 	if err != nil {
@@ -75,7 +75,7 @@ func (c *AppContext) PostHandler(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Param        user_id body string true "user_id"
-// @Success 	 200 {object} timeline.FollowingResponse
+// @Success 	 200 {object} service.FollowingResponse
 // @Router       /follow [post]
 func (c *AppContext) FollowingHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -92,6 +92,14 @@ func (c *AppContext) FollowingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// AllPostsHandler godoc
+// @Summary      List all posts
+// @Tags         follow
+// @Accept       json
+// @Produce      json
+// @Param        user_id body string true "user_id"
+// @Success 	 200 {object} service.AllPostResponse
+// @Router       /all [get]
 func (c *AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request) {
 	response, err := c.AllService.Run()
 
@@ -102,6 +110,14 @@ func (c *AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// FollowHandler godoc
+// @Summary      follow a user
+// @Tags         follow
+// @Accept       json
+// @Produce      json
+// @Param        to body string true "to"
+// @Param        from body string true "from"
+// @Router       /follow [post]
 func (c *AppContext) FollowHandler(w http.ResponseWriter, r *http.Request) {
 	var invalidIntent service.FollowIntent
 
@@ -163,7 +179,7 @@ func (c *AppContext) ProfileHandler(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Param        username query string true "username"
-// @Success     200 {object} user.User
+// @Success     200 {object} entity.User
 // @Router       /user [post]
 func (c *AppContext) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")

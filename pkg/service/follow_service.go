@@ -18,7 +18,7 @@ type FollowService struct {
 	UserRepository repository.Follower
 }
 
-// FollowRunner
+// FollowRunner defines the contract to run the follow usecase
 type FollowRunner interface {
 	Run(intent FollowIntent) (bool, error)
 }
@@ -40,8 +40,5 @@ func NewFollowIntent(to, from uuid.UUID) (FollowIntent, error) {
 		return FollowIntent{}, fmt.Errorf("can't follow yourself")
 	}
 
-	return FollowIntent{
-		To:   to,
-		From: from,
-	}, nil
+	return FollowIntent{To: to, From: from}, nil
 }
