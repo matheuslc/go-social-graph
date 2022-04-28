@@ -54,6 +54,7 @@ type Stats interface {
 	CountPosts(userID string) (int64, error)
 }
 
+// Find finds a user by userID
 func (repo *UserRepository) Find(userID string) (entity.User, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	if err != nil {
@@ -93,6 +94,7 @@ func (repo *UserRepository) Find(userID string) (entity.User, error) {
 	return persistedUser.(entity.User), nil
 }
 
+// FindByUsername finds a user by its username
 func (repo *UserRepository) FindByUsername(username string) (bool, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	if err != nil {
@@ -127,6 +129,7 @@ func (repo *UserRepository) FindByUsername(username string) (bool, error) {
 	return persistedUser.(bool), nil
 }
 
+// Follow match users and creates a relantionship between them
 func (repo *UserRepository) Follow(to, from string) (bool, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
@@ -198,6 +201,7 @@ func (repo *UserRepository) Unfollow(to, from string) (bool, error) {
 	return true, nil
 }
 
+// Create
 func (repo *UserRepository) Create(username string) (entity.User, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
