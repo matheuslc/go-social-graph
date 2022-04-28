@@ -43,6 +43,7 @@ func TestFollowingRun(t *testing.T) {
 		t.Errorf("Expect %d, got %d ", expectLength, postLength)
 	}
 }
+<<<<<<< HEAD
 
 func TestFollowingFailRun(t *testing.T) {
 	controller := gomock.NewController(t)
@@ -67,3 +68,5 @@ func TestFollowingFailRun(t *testing.T) {
 		t.Errorf("Expected an error for user time. Result: %s", result)
 	}
 }
+=======
+>>>>>>> 3f9e49a8a132187b0d218640407e36a280e6221f
