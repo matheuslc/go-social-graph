@@ -3,10 +3,8 @@ package handler
 import (
 	"fmt"
 	p "gosocialgraph/pkg/persistence"
-	"gosocialgraph/pkg/post"
-	"gosocialgraph/pkg/timeline"
-	"gosocialgraph/pkg/usecase"
-	"gosocialgraph/pkg/user"
+	"gosocialgraph/pkg/repository"
+	"gosocialgraph/pkg/service"
 	"os"
 
 	"github.com/gorilla/mux"
@@ -18,20 +16,20 @@ type AppContext struct {
 	Router *mux.Router
 	Graph  *p.Graph
 
-	FindUserService   *usecase.FindUserService
-	CreateUserService *usecase.CreateUserService
-	UserRepository    *user.Repository
-	StatsService      *usecase.StatsService
+	FindUserService   *service.FindUserService
+	CreateUserService *service.CreateUserService
+	UserRepository    *repository.UserRepository
+	StatsService      *service.StatsService
 
-	AllService       *timeline.AllService
-	FollowingService *timeline.FollowingService
-	ProfileService   *timeline.ProfileService
+	AllService       *service.AllService
+	FollowingService *service.FollowingService
+	ProfileService   *service.ProfileService
 
-	FollowService   *usecase.FollowService
-	UnfollowService *usecase.UnfollowService
+	FollowService   *service.FollowService
+	UnfollowService *service.UnfollowService
 
-	PostService   *post.PostService
-	RepostService *post.RepostService
+	PostService   *service.PostService
+	RepostService *service.RepostService
 }
 
 func NewAppContext() AppContext {
@@ -45,15 +43,15 @@ func NewAppContext() AppContext {
 	}
 
 	r := mux.NewRouter()
-	userRepository := user.Repository{
+	userRepository := repository.UserRepository{
 		Client: db,
 	}
 
-	postRepository := post.Repository{
+	postRepository := repository.PostRepository{
 		Client: db,
 	}
 
-	timelineRepository := timeline.Repository{
+	timelineRepository := repository.TimelineRepository{
 		Client: db,
 	}
 
@@ -62,41 +60,41 @@ func NewAppContext() AppContext {
 		Router:         r,
 		Graph:          &p.Graph{Client: db},
 		UserRepository: &userRepository,
-		StatsService: &usecase.StatsService{
+		StatsService: &service.StatsService{
 			Repository: &userRepository,
 		},
-		ProfileService: &timeline.ProfileService{
-			FindUserService: usecase.FindUserService{
+		ProfileService: &service.ProfileService{
+			FindUserService: service.FindUserService{
 				UserRepository: &userRepository,
 			},
-			StatsService: usecase.StatsService{
+			StatsService: service.StatsService{
 				Repository: &userRepository,
 			},
-			UserPostService: timeline.UserPostService{
+			UserPostService: service.UserPostService{
 				Repository: &timelineRepository,
 			},
 		},
-		CreateUserService: &usecase.CreateUserService{
+		CreateUserService: &service.CreateUserService{
 			UserRepository: &userRepository,
 		},
-		AllService: &timeline.AllService{
+		AllService: &service.AllService{
 			Repository: &timelineRepository,
 		},
-		FollowingService: &timeline.FollowingService{
+		FollowingService: &service.FollowingService{
 			Repository: &timelineRepository,
 		},
 
-		FollowService: &usecase.FollowService{
+		FollowService: &service.FollowService{
 			UserRepository: &userRepository,
 		},
-		UnfollowService: &usecase.UnfollowService{
+		UnfollowService: &service.UnfollowService{
 			Repository: &userRepository,
 		},
 
-		PostService: &post.PostService{
+		PostService: &service.PostService{
 			Repository: &postRepository,
 		},
-		RepostService: &post.RepostService{
+		RepostService: &service.RepostService{
 			Repository: &postRepository,
 		},
 	}

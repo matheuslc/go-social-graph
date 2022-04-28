@@ -2,10 +2,7 @@ package handler
 
 import (
 	"encoding/json"
-	"gosocialgraph/pkg/post"
-	"gosocialgraph/pkg/timeline"
-	"gosocialgraph/pkg/usecase"
-	"gosocialgraph/pkg/user"
+	"gosocialgraph/pkg/service"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -23,7 +20,7 @@ import (
 // @Param        quote body string false "string"
 // @Router       /repost [post]
 func (c AppContext) RepostHandler(w http.ResponseWriter, r *http.Request) {
-	var intent post.CreateRepostIntent
+	var intent service.CreateRepostIntent
 
 	err := json.NewDecoder(r.Body).Decode(&intent)
 	if err != nil {
@@ -49,7 +46,7 @@ func (c AppContext) RepostHandler(w http.ResponseWriter, r *http.Request) {
 // @Param        content body string true "content"
 // @Router       /post [post]
 func (context *AppContext) PostHandler(w http.ResponseWriter, r *http.Request) {
-	var intentToValidate post.CreatePostIntent
+	var intentToValidate service.CreatePostIntent
 
 	err := json.NewDecoder(r.Body).Decode(&intentToValidate)
 	if err != nil {
@@ -57,7 +54,7 @@ func (context *AppContext) PostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	intent, err := post.NewCreatePostIntent(intentToValidate.UserId, intentToValidate.Content)
+	intent, err := service.NewCreatePostIntent(intentToValidate.UserId, intentToValidate.Content)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 		return
@@ -82,7 +79,7 @@ func (context *AppContext) PostHandler(w http.ResponseWriter, r *http.Request) {
 // @Router       /follow [post]
 func (context AppContext) FollowingHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	intent := timeline.FollowingIntent{
+	intent := service.FollowingIntent{
 		UserId: uuid.MustParse(vars["user_id"]),
 	}
 
@@ -106,7 +103,7 @@ func (context AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (context AppContext) FollowHandler(w http.ResponseWriter, r *http.Request) {
-	var invalidIntent usecase.FollowIntent
+	var invalidIntent service.FollowIntent
 
 	err := json.NewDecoder(r.Body).Decode(&invalidIntent)
 	if err != nil {
@@ -114,7 +111,7 @@ func (context AppContext) FollowHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	intent, err := usecase.NewFollowIntent(invalidIntent.To, invalidIntent.From)
+	intent, err := service.NewFollowIntent(invalidIntent.To, invalidIntent.From)
 
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
@@ -130,7 +127,7 @@ func (context AppContext) FollowHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (context AppContext) UnfollowHandler(w http.ResponseWriter, r *http.Request) {
-	var unfollowIntent user.UnfollowIntent
+	var unfollowIntent service.UnfollowIntent
 
 	err := json.NewDecoder(r.Body).Decode(&unfollowIntent)
 	if err != nil {
@@ -147,8 +144,8 @@ func (context AppContext) UnfollowHandler(w http.ResponseWriter, r *http.Request
 
 func (context AppContext) ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	intent := timeline.ProfileIntent{
-		UserId: uuid.MustParse(vars["user_id"]),
+	intent := service.ProfileIntent{
+		UserID: uuid.MustParse(vars["user_id"]),
 	}
 
 	response, err := context.ProfileService.Run(intent)
@@ -172,7 +169,7 @@ func (context AppContext) CreateUserHandler(w http.ResponseWriter, r *http.Reque
 	username := r.FormValue("username")
 	w.WriteHeader(http.StatusOK)
 
-	intent := usecase.CreateUserIntent{
+	intent := service.CreateUserIntent{
 		Username: username,
 	}
 
