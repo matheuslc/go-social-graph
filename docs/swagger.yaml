@@ -1,27 +1,5 @@
 definitions:
-  post.CreateRepostIntent:
-    properties:
-      parent_id:
-        type: string
-      quote:
-        type: string
-      user_id:
-        type: string
-    type: object
-  post.UserPost:
-    properties:
-      post: {}
-      user:
-        $ref: '#/definitions/user.User'
-    type: object
-  timeline.FollowingResponse:
-    properties:
-      posts:
-        items:
-          $ref: '#/definitions/post.UserPost'
-        type: array
-    type: object
-  user.User:
+  entity.User:
     properties:
       created_at:
         type: string
@@ -29,6 +7,26 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  entity.UserPost:
+    properties:
+      post: {}
+      user:
+        $ref: '#/definitions/entity.User'
+    type: object
+  service.AllPostResponse:
+    properties:
+      posts:
+        items:
+          $ref: '#/definitions/entity.UserPost'
+        type: array
+    type: object
+  service.FollowingResponse:
+    properties:
+      posts:
+        items:
+          $ref: '#/definitions/entity.UserPost'
+        type: array
     type: object
 host: localhost:3010
 info:
@@ -44,8 +42,8 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
-  /follow:
-    post:
+  /all:
+    get:
       consumes:
       - application/json
       parameters:
@@ -61,8 +59,31 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/timeline.FollowingResponse'
-      summary: Starts to follow an user
+            $ref: '#/definitions/service.AllPostResponse'
+      summary: List all posts
+      tags:
+      - follow
+  /follow:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: to
+        in: body
+        name: to
+        required: true
+        schema:
+          type: string
+      - description: from
+        in: body
+        name: from
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: follow a user
       tags:
       - follow
   /post:
@@ -95,12 +116,23 @@ paths:
       - application/json
       description: Creates a respost from a post
       parameters:
-      - description: post
+      - description: user_id
         in: body
-        name: post
+        name: user_id
         required: true
         schema:
-          $ref: '#/definitions/post.CreateRepostIntent'
+          type: string
+      - description: parent_id
+        in: body
+        name: parent_id
+        required: true
+        schema:
+          type: string
+      - description: string
+        in: body
+        name: quote
+        schema:
+          type: string
       produces:
       - application/json
       responses: {}
@@ -124,7 +156,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user.User'
+            $ref: '#/definitions/entity.User'
       summary: Create a user
       tags:
       - users

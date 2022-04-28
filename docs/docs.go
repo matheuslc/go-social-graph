@@ -25,8 +25,8 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/follow": {
-            "post": {
+        "/all": {
+            "get": {
                 "consumes": [
                     "application/json"
                 ],
@@ -36,7 +36,7 @@ const docTemplate = `{
                 "tags": [
                     "follow"
                 ],
-                "summary": "Starts to follow an user",
+                "summary": "List all posts",
                 "parameters": [
                     {
                         "description": "user_id",
@@ -52,10 +52,45 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/timeline.FollowingResponse"
+                            "$ref": "#/definitions/service.AllPostResponse"
                         }
                     }
                 }
+            }
+        },
+        "/follow": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "follow"
+                ],
+                "summary": "follow a user",
+                "parameters": [
+                    {
+                        "description": "to",
+                        "name": "to",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "from",
+                        "name": "from",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {}
             }
         },
         "/post": {
@@ -109,12 +144,29 @@ const docTemplate = `{
                 "summary": "Repost a post from someone",
                 "parameters": [
                     {
-                        "description": "post",
-                        "name": "post",
+                        "description": "user_id",
+                        "name": "user_id",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/post.CreateRepostIntent"
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "parent_id",
+                        "name": "parent_id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "string",
+                        "name": "quote",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
@@ -147,7 +199,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/user.User"
+                            "$ref": "#/definitions/entity.User"
                         }
                     }
                 }
@@ -155,41 +207,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "post.CreateRepostIntent": {
-            "type": "object",
-            "properties": {
-                "parent_id": {
-                    "type": "string"
-                },
-                "quote": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "post.UserPost": {
-            "type": "object",
-            "properties": {
-                "post": {},
-                "user": {
-                    "$ref": "#/definitions/user.User"
-                }
-            }
-        },
-        "timeline.FollowingResponse": {
-            "type": "object",
-            "properties": {
-                "posts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/post.UserPost"
-                    }
-                }
-            }
-        },
-        "user.User": {
+        "entity.User": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -200,6 +218,37 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "entity.UserPost": {
+            "type": "object",
+            "properties": {
+                "post": {},
+                "user": {
+                    "$ref": "#/definitions/entity.User"
+                }
+            }
+        },
+        "service.AllPostResponse": {
+            "type": "object",
+            "properties": {
+                "posts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.UserPost"
+                    }
+                }
+            }
+        },
+        "service.FollowingResponse": {
+            "type": "object",
+            "properties": {
+                "posts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.UserPost"
+                    }
                 }
             }
         }
