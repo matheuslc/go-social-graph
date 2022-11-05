@@ -2,11 +2,13 @@ package handler
 
 import (
 	"encoding/json"
+	"gosocialgraph/openapi"
 	"gosocialgraph/pkg/service"
 	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/labstack/echo/v4"
 )
 
 // RepostHandler godoc
@@ -172,28 +174,19 @@ func (c *AppContext) ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// CreateUserHandler godoc
-// @Summary      Create a user
-// @Description  creates a new user which is required to use all other resources
-// @Tags         users
-// @Accept       json
-// @Produce      json
-// @Param        username query string true "username"
-// @Success     200 {object} entity.User
-// @Router       /user [post]
-func (c *AppContext) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	username := r.FormValue("username")
-	w.WriteHeader(http.StatusOK)
-
-	intent := service.CreateUserIntent{
-		Username: username,
-	}
+func (c *AppContext) CreateUserHandler(echoContext echo.Context) error {
+	username := echoContext.FormValue("username")
+	intent := openapi.CreateUserIntent{Username: &username}
 
 	persistedUser, err := c.CreateUserService.Run(intent)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return err
 	} else {
-		respondWithJSON(w, http.StatusOK, persistedUser)
+		return echoContext.JSON(http.StatusOK, openapi.CreateUserResponse{
+			Id:        &persistedUser.ID,
+			CreatedAt: &persistedUser.CreatedAt,
+			Username:  &persistedUser.Username,
+		})
 	}
 }
 
