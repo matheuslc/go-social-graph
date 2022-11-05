@@ -18,17 +18,17 @@ import (
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/8RUX0/jOBD/KtbcPQaSwlveOE7HoV0JxO4+rSo0JJPGKLGNPSlUVb77apyUNlDKCgnt",
-	"U1N7bP/m92fWUNjWWUOGA+RrCEVNLcbPc0/IdG0D39BDR4Fl0XnryLOmWFJYw2TiRotPX8ksuIZ8liXA",
-	"K0eQQ2CvzQL6BLpA/laXUlpZ3yJDDl2nS3hV2yfg6aHTnkrIfz4fTJ5fm/fJBFxw1gQ6iO4VnI8geQPE",
-	"j0D+AIhYU94iTx4skemIdUuQfBDcQKnBlvY0uA/5c3myC2reS7E2lZVrSgqF1461NZDD91oHpYNCo+gJ",
-	"W9eQspXqgjYLdXXWcX2izoqCQlDntiT1X2MflTYKVXBU6EoXKBcptmq4945UoKLzmleyuLKdV2fXl8fS",
-	"nOZGGriw6pstNDbqwqOrZRsSWJIPA6TZcXacSfPWkUGnIYfTuJSAQ64j5Sk6nTo7Gnb8FU0inMsSchDj",
-	"/I+mbMjDQBUF/seWqxe+QeeasY30PgiCTUTk629PFeTwV7rNUDoGKH2dnkj0lODHWhe1EmEUmlJtHt4V",
-	"j31HUc3BYLHBkyz7FJyjh/cAvfoSPRW6tkW/gny0vkJl6FEJx6qy0kRsRvTERRDnRfrncnZQxdtKN5Su",
-	"x1T3Am9B+xQaKrciOfTYEpOXe9egBZZIDgkMIdiZFFP6kh0q3kv8/NOpnoyL36H6hthrWtLgk5FBJYmV",
-	"VuTQlu7I/pbu+PfNEGzxHMxA2zWsHXpO5cWjEhmnPU8H3uGpNK7Yu3sqxki85/XZnxZg4vUX/t4QLgfI",
-	"LzfunN44mWj/0pIa69oh6J1vIIea2eVp2tgCm9oGzk+zWZZCP+9/BQAA//8JEx7moAcAAA==",
+	"H4sIAAAAAAAC/8RU30/bPhD/V6z7fh8DaYGnvDGmMbRJILY9TRU6kktjlNjGvhSqKv/7dE5KGyhlQkJ7",
+	"amqf7c99ftwKcts4a8hwgGwFIa+owfh55gmZrmzga7pvKbAsOm8dedYUS3JrmEzcaPDxO5k5V5BNT04S",
+	"4KUjyCCw12YOXQJtIH+jC6ktrW+QIYO21QW8qO0S8HTfak8FZL+fDiZPz826ZIQuOGsC7YX3As57kLwC",
+	"4lcgvwdErClukEcPFsh0wLohSN4JrqfUYEM7GtyF/Kk82QY166RYm9LKNQWF3GvH2hrI4Gelg9JBoVH0",
+	"iI2rSdlStUGbubo8bbk6Uqd5TiGoM1uQ+lLbB6WNQhUc5brUOcpFiq3q770lFShvvealLC5t69Xp1cWh",
+	"NKe5lgbOrfphc421OvfoKtmGBBbkQw9pejg5nEjz1pFBpyGD47iUgEOuIuUpOp06Ozh2+BVNIpyLAjIQ",
+	"43xFU9TkoaeKAn+yxfKZb9C5emgjvQuCYJ0R+frfUwkZ/JduQpQOCUpfxicSPSb4odJ5pUQYhaZQ64e3",
+	"xWPfUlSzN1hs8Ggy+RCcg4d3AL38Fj0V2qZBv4RssL5CZehBCceqtNJEbEb0xHkQ50X6Z3K2V8XbUteU",
+	"roZUdwJvTrsU6is3Ijn02BCTl3tXoAWWSA4J9CHYmhRj+pItKt5K/OzDqR6Ni7+h+prYa1pQ75OBQSWJ",
+	"lVbk0IbuyP6G7vj31RBs8OzNQNPWrB16TuXFgwIZxz2PB97+qTSs2Ns7yodIvOX16b8WYOT1Z/5eEy4H",
+	"yC/W7hzfOJpon2lBtXVNH/TW15BBxeyyNK1tjnVlA2fHk+kkhW7W/QkAAP//OiUrRaEHAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
