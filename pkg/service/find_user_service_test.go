@@ -21,10 +21,9 @@ func TestFindUserRun(t *testing.T) {
 	repo := mock.NewMockUserReader(controller)
 	repo.EXPECT().Find(userID.String()).Return(expectedUserFound, nil)
 
-	intent := service.FindUserIntent{UserID: userID}
 	service := service.FindUserService{UserRepository: repo}
 
-	_, err := service.Run(intent)
+	_, err := service.Run(userID)
 	if err != nil {
 		t.Errorf("User not found. Error %s", err)
 	}
@@ -40,14 +39,9 @@ func TestFindUserFailRun(t *testing.T) {
 	repo := mock.NewMockUserReader(controller)
 	repo.EXPECT().Find(userID.String()).Return(empty, errors.New("Fake error"))
 
-	intent := service.FindUserIntent{
-		UserID: userID,
-	}
-	service := service.FindUserService{
-		UserRepository: repo,
-	}
+	service := service.FindUserService{UserRepository: repo}
 
-	_, err := service.Run(intent)
+	_, err := service.Run(userID)
 	if err == nil {
 		t.Errorf("Expected an error when trying to create an user. Error %s", err)
 	}

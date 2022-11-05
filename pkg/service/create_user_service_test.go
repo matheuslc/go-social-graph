@@ -26,9 +26,8 @@ func TestCreateUserRun(t *testing.T) {
 	}, nil)
 
 	sv := service.CreateUserService{UserRepository: repo}
-	intent := service.CreateUserIntent{Username: username}
 
-	result, err := sv.Run(intent)
+	result, err := sv.Run(username)
 	if err != nil || len(result.Username) == 0 || result.Username != username {
 		t.Errorf("Got an error when trying to create a new user. Error: %s", err)
 	}
@@ -43,9 +42,8 @@ func TestCreateUserAlreadyExistRun(t *testing.T) {
 	repo.EXPECT().FindByUsername(username).Return(true, nil)
 
 	sv := service.CreateUserService{UserRepository: repo}
-	intent := service.CreateUserIntent{Username: username}
 
-	_, err := sv.Run(intent)
+	_, err := sv.Run(username)
 	if err == nil {
 		t.Errorf("Expect an error when trying to create a new user that already exist. Error: %s", err)
 	}

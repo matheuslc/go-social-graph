@@ -21,22 +21,18 @@ func TestProfileRun(t *testing.T) {
 	// Mocking find user service
 	user := u.User{ID: userID}
 	userFound := service.FindUserResponse{User: user}
-	intent := service.FindUserIntent{UserID: userID}
 
 	findUserService := mock_service.NewMockFindUserRunner(controller)
-	findUserService.EXPECT().Run(intent).Return(userFound, nil)
+	findUserService.EXPECT().Run(userID).Return(userFound, nil)
 
 	// Mocking stats service
-	statsIntent := service.StatsIntent{UserID: userID}
 	statsResponse := service.StatsResponse{
 		ProfileStats: service.ProfileStats{Followers: 10, Following: 5, PostsCount: 10},
 	}
 	statsService := mock_service.NewMockStatsRunner(controller)
-	statsService.EXPECT().Run(statsIntent).Return(statsResponse, nil)
+	statsService.EXPECT().Run(userID).Return(statsResponse, nil)
 
 	// Mocking user post stats service
-	userPostIntent := service.UserPostsIntent{UserID: userID}
-
 	firstPost := entity.Post{ID: uuid.New(), Content: "first fake post", CreatedAt: time.Now()}
 	secondPost := entity.Post{ID: uuid.New(), Content: "second fake post", CreatedAt: time.Now()}
 
@@ -45,7 +41,7 @@ func TestProfileRun(t *testing.T) {
 
 	userPostResponse := service.UserPostResponse{Posts: posts}
 	userPostService := mock_service.NewMockUserPostRunner(controller)
-	userPostService.EXPECT().Run(userPostIntent).Return(userPostResponse, nil)
+	userPostService.EXPECT().Run(userID).Return(userPostResponse, nil)
 
 	sv := service.ProfileService{
 		FindUserService: findUserService,
@@ -53,9 +49,7 @@ func TestProfileRun(t *testing.T) {
 		UserPostService: userPostService,
 	}
 
-	profileIntent := service.ProfileIntent{UserID: userID}
-
-	result, err := sv.Run(profileIntent)
+	result, err := sv.Run(userID)
 	if err != nil {
 		t.Errorf("Could not get user profile properly")
 	}

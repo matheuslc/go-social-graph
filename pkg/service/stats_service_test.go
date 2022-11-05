@@ -23,10 +23,9 @@ func TestStatsRun(t *testing.T) {
 	repo.EXPECT().CountPosts(userID.String()).Return(int64(expectedPosts), nil)
 	repo.EXPECT().CountFollowing(userID.String()).Return(int64(expectedFollowing), nil)
 
-	intent := service.StatsIntent{UserID: userID}
 	sv := service.StatsService{repo}
 
-	result, err := sv.Run(intent)
+	result, err := sv.Run(userID)
 	if err != nil {
 		t.Errorf("Expected stats from a user. Got an error %s", err)
 	}
@@ -58,10 +57,9 @@ func TestStatsFailRun(t *testing.T) {
 	repo.EXPECT().CountPosts(userID.String()).Return(int64(0), secondError)
 	repo.EXPECT().CountFollowing(userID.String()).Return(int64(0), thirdError)
 
-	intent := service.StatsIntent{UserID: userID}
 	sv := service.StatsService{repo}
 
-	_, err := sv.Run(intent)
+	_, err := sv.Run(userID)
 	if err == nil {
 		t.Errorf("Expected at least an error. Service executed successfuly")
 	}

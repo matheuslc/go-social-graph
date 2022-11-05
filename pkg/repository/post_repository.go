@@ -1,5 +1,7 @@
 package repository
 
+//go:generate mockgen -source=./post_repository.go -destination=../mock/repository/post_repository.go
+
 import (
 	"fmt"
 	"gosocialgraph/pkg/entity"
