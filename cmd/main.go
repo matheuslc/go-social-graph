@@ -12,7 +12,6 @@ func main() {
 	server.RegisterHandlers(context.Router, context)
 
 	// context.Router.HandleFunc("/profile/{user_id}", context.ProfileHandler).Methods("GET")
-	// context.Router.HandleFunc("/post", context.PostHandler).Methods("POST")
 	// context.Router.HandleFunc("/repost", context.RepostHandler).Methods("POST")
 	// context.Router.HandleFunc("/follow", context.FollowHandler).Methods("POST")
 	// context.Router.HandleFunc("/unfollow", context.UnfollowHandler).Methods("DELETE")

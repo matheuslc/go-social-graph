@@ -5,10 +5,10 @@
 package mock_service
 
 import (
-	service "gosocialgraph/pkg/service"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 )
 
 // MockFollowRunner is a mock of FollowRunner interface.
@@ -35,16 +35,16 @@ func (m *MockFollowRunner) EXPECT() *MockFollowRunnerMockRecorder {
 }
 
 // Run mocks base method.
-func (m *MockFollowRunner) Run(intent service.FollowIntent) (bool, error) {
+func (m *MockFollowRunner) Run(to, from uuid.UUID) (bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Run", intent)
+	ret := m.ctrl.Call(m, "Run", to, from)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockFollowRunnerMockRecorder) Run(intent interface{}) *gomock.Call {
+func (mr *MockFollowRunnerMockRecorder) Run(to, from interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockFollowRunner)(nil).Run), intent)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockFollowRunner)(nil).Run), to, from)
 }
