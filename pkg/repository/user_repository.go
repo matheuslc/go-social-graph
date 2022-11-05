@@ -112,14 +112,14 @@ func (repo *UserRepository) FindByUsername(username string) (bool, error) {
 		)
 
 		if err != nil {
-			return nil, err
+			return false, err
 		}
 
 		if result.Next() {
 			return true, nil
 		}
 
-		return nil, result.Err()
+		return false, result.Err()
 	})
 
 	if err != nil {

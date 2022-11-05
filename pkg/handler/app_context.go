@@ -7,14 +7,15 @@ import (
 	"gosocialgraph/pkg/service"
 	"os"
 
-	"github.com/gorilla/mux"
+	"github.com/labstack/echo/v4"
+	middleware "github.com/labstack/echo/v4/middleware"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 )
 
 // AppContext is the application container, where dependencies are defined
 type AppContext struct {
 	Db     *neo4j.Driver
-	Router *mux.Router
+	Router *echo.Echo
 	Graph  *p.Graph
 
 	FindUserService   *service.FindUserService
@@ -40,7 +41,10 @@ func NewAppContext() AppContext {
 		fmt.Printf("Can't connect to neo4j. Reason: %s", err)
 	}
 
-	r := mux.NewRouter()
+	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
 	userRepository := repository.UserRepository{
 		Client: db,
 	}
@@ -55,7 +59,7 @@ func NewAppContext() AppContext {
 
 	return AppContext{
 		Db:             &db,
-		Router:         r,
+		Router:         e,
 		Graph:          &p.Graph{Client: db},
 		UserRepository: &userRepository,
 		StatsService: &service.StatsService{

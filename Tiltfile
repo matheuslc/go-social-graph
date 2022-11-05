@@ -34,15 +34,16 @@ k8s_resource('social-graph-api',
   auto_init=False,
   port_forwards=['3010:3010', '3011:3011'],
   resource_deps=['go-compile'],
+  links=['neo4j-standalone'],
   labels=['api']
 )
 
-# Minio using Helm
+# Neo4j using Helm
 helm_remote(
   'neo4j-standalone',
   repo_name='neo4j',
   repo_url='https://helm.neo4j.com/neo4j/',
-  values=['./infra/database/values.yaml'],
+  values=['./infra/database/values.yaml']
 )
 
 k8s_resource(
