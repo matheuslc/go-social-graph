@@ -3,12 +3,14 @@ package main
 import (
 	_ "gosocialgraph/docs"
 	"gosocialgraph/pkg/handler"
+	"gosocialgraph/server"
 )
 
 func main() {
 	context := handler.NewAppContext()
 
-	context.Router.POST("/api/user", context.CreateUserHandler)
+	server.RegisterHandlers(context.Router, context)
+
 	// context.Router.HandleFunc("/profile/{user_id}", context.ProfileHandler).Methods("GET")
 	// context.Router.HandleFunc("/post", context.PostHandler).Methods("POST")
 	// context.Router.HandleFunc("/repost", context.RepostHandler).Methods("POST")

@@ -7,11 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// StatsIntent defines what you need to execute the use case
-type StatsIntent struct {
-	UserID uuid.UUID `json:"user_id"`
-}
-
 // StatsResponse defines the usecase response
 type StatsResponse struct {
 	ProfileStats `json:"user_stats"`
@@ -31,11 +26,11 @@ type StatsService struct {
 
 // StatsRunner
 type StatsRunner interface {
-	Run(intent StatsIntent) (StatsResponse, error)
+	Run(userID uuid.UUID) (StatsResponse, error)
 }
 
 // Run executes the usecase
-func (sv StatsService) Run(intent StatsIntent) (StatsResponse, error) {
+func (sv StatsService) Run(userID uuid.UUID) (StatsResponse, error) {
 	var wg sync.WaitGroup
 	var userStats ProfileStats
 	var runningErros []error
@@ -44,7 +39,7 @@ func (sv StatsService) Run(intent StatsIntent) (StatsResponse, error) {
 
 	go func() {
 		defer wg.Done()
-		followers, err := sv.Repository.CountFollowers(intent.UserID.String())
+		followers, err := sv.Repository.CountFollowers(userID)
 
 		if err != nil {
 			runningErros = append(runningErros, err)
@@ -55,7 +50,7 @@ func (sv StatsService) Run(intent StatsIntent) (StatsResponse, error) {
 
 	go func() {
 		defer wg.Done()
-		following, err := sv.Repository.CountFollowing(intent.UserID.String())
+		following, err := sv.Repository.CountFollowing(userID)
 
 		if err != nil {
 			runningErros = append(runningErros, err)
@@ -66,7 +61,7 @@ func (sv StatsService) Run(intent StatsIntent) (StatsResponse, error) {
 
 	go func() {
 		defer wg.Done()
-		posts, err := sv.Repository.CountPosts(intent.UserID.String())
+		posts, err := sv.Repository.CountPosts(userID)
 
 		if err != nil {
 			runningErros = append(runningErros, err)

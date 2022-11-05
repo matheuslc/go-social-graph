@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"gosocialgraph/pkg/entity"
 	"time"
 
@@ -15,7 +16,7 @@ type UserRepository struct {
 
 // UserReader defines a unit for finding an user
 type UserReader interface {
-	Find(userID string) (entity.User, error)
+	Find(userID uuid.UUID) (entity.User, error)
 	FindByUsername(username string) (bool, error)
 }
 
@@ -49,13 +50,13 @@ type UserReaderWriter interface {
 
 // Stats defines the methods needed to get user related stats
 type Stats interface {
-	CountFollowing(userID string) (int64, error)
-	CountFollowers(userID string) (int64, error)
-	CountPosts(userID string) (int64, error)
+	CountFollowing(userID uuid.UUID) (int64, error)
+	CountFollowers(userID uuid.UUID) (int64, error)
+	CountPosts(userID uuid.UUID) (int64, error)
 }
 
 // Find finds a user by userID
-func (repo *UserRepository) Find(userID string) (entity.User, error) {
+func (repo *UserRepository) Find(userID uuid.UUID) (entity.User, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	if err != nil {
 		return entity.User{}, err
@@ -211,7 +212,7 @@ func (repo *UserRepository) Create(username string) (entity.User, error) {
 
 	persistedUser, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		result, err := transaction.Run(
-			"CREATE (u:User) SET u.uuid = $uuid, u.username = $username, u.created_at = datetime($createdAt) RETURN u.uuid, u.username",
+			"CREATE (u:User) SET u.uuid = $uuid, u.username = $username, u.created_at = datetime($createdAt) RETURN u.uuid, u.username, u.created_at",
 			map[string]interface{}{
 				"uuid":      uuid.New().String(),
 				"username":  username,
@@ -224,9 +225,12 @@ func (repo *UserRepository) Create(username string) (entity.User, error) {
 		}
 
 		if result.Next() {
+			fmt.Println(result.Record().Keys())
+
 			return entity.User{
-				ID:       uuid.MustParse(result.Record().GetByIndex(0).(string)),
-				Username: result.Record().GetByIndex(1).(string),
+				ID:        uuid.MustParse(result.Record().GetByIndex(0).(string)),
+				Username:  result.Record().GetByIndex(1).(string),
+				CreatedAt: result.Record().GetByIndex(2).(time.Time),
 			}, nil
 		}
 
@@ -240,7 +244,7 @@ func (repo *UserRepository) Create(username string) (entity.User, error) {
 	return persistedUser.(entity.User), nil
 }
 
-func (repo *UserRepository) CountFollowing(userId string) (int64, error) {
+func (repo *UserRepository) CountFollowing(userID uuid.UUID) (int64, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return 0, err
@@ -252,7 +256,7 @@ func (repo *UserRepository) CountFollowing(userId string) (int64, error) {
 		result, err := transaction.Run(
 			"MATCH (user:User { uuid: $userId })-[:FOLLOW]->(following) RETURN count(following)",
 			map[string]interface{}{
-				"userId": userId,
+				"userId": userID,
 			},
 		)
 
@@ -274,7 +278,7 @@ func (repo *UserRepository) CountFollowing(userId string) (int64, error) {
 	return count.(int64), nil
 }
 
-func (repo *UserRepository) CountFollowers(userId string) (int64, error) {
+func (repo *UserRepository) CountFollowers(userID uuid.UUID) (int64, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return 0, err
@@ -286,7 +290,7 @@ func (repo *UserRepository) CountFollowers(userId string) (int64, error) {
 		result, err := transaction.Run(
 			"MATCH (user:User { uuid: $userId })<-[:FOLLOW]-(followers) RETURN count(followers)",
 			map[string]interface{}{
-				"userId": userId,
+				"userId": userID,
 			},
 		)
 
@@ -308,7 +312,7 @@ func (repo *UserRepository) CountFollowers(userId string) (int64, error) {
 	return count.(int64), nil
 }
 
-func (repo *UserRepository) CountPosts(userId string) (int64, error) {
+func (repo *UserRepository) CountPosts(userID uuid.UUID) (int64, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return 0, err
@@ -319,7 +323,7 @@ func (repo *UserRepository) CountPosts(userId string) (int64, error) {
 		result, err := transaction.Run(
 			"MATCH (user:User { uuid: $userId })-[:TWEET|:REPOST]->(posts) RETURN count(posts)",
 			map[string]interface{}{
-				"userId": userId,
+				"userId": userID,
 			},
 		)
 
