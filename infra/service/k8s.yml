@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: social-graph-api
+  labels:
+    app: social-graph-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: social-graph-api
+  template:
+    metadata:
+      labels:
+        app: social-graph-api
+    spec:
+      containers:
+      - name: social-graph-api
+        image: social-graph-api-image
+        ports:
+        - containerPort: 3010
+          name: public-api
+        - containerPort: 3011
+          name: metrics
+        env:
+        - name: NEO4J_HOST
+          value: bolt://neo4j-standalone
+        - name: NEO4J_USERNAME
+          value: neo4j
+        - name: NEO4J_PASSWORD
+          value: strongpassword
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: social-graph-api
+  name: social-graph-api
+spec:
+  template:
+    metadata:
+      labels:
+        app: social-graph-api
+  ports:
+  - port: 3010
+    protocol: TCP
+    targetPort: 3010
+    nodePort: 32100
+    name: public-api
+  - port: 3011
+    protocol: TCP
+    targetPort: 3011
+    nodePort: 32101
+    name: metrics
+  selector:
+    app: social-graph-api
+  type: NodePort
+status:
+  loadBalancer: {}
+  
