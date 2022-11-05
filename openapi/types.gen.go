@@ -33,8 +33,16 @@ type CreateUserMultipartBody struct {
 	Username *string `json:"username,omitempty"`
 }
 
+// FollowHandlerJSONBody defines parameters for FollowHandler.
+type FollowHandlerJSONBody struct {
+	From *openapi_types.UUID `json:"from,omitempty"`
+}
+
 // PostHandlerJSONRequestBody defines body for PostHandler for application/json ContentType.
 type PostHandlerJSONRequestBody = CreatePostRequest
 
 // CreateUserMultipartRequestBody defines body for CreateUser for multipart/form-data ContentType.
 type CreateUserMultipartRequestBody CreateUserMultipartBody
+
+// FollowHandlerJSONRequestBody defines body for FollowHandler for application/json ContentType.
+type FollowHandlerJSONRequestBody FollowHandlerJSONBody

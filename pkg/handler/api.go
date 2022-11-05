@@ -95,36 +95,13 @@ func (c *AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// FollowHandler godoc
-// @Summary      follow a user
-// @Tags         follow
-// @Accept       json
-// @Produce      json
-// @Param        to body string true "to"
-// @Param        from body string true "from"
-// @Router       /follow [post]
-func (c *AppContext) FollowHandler(w http.ResponseWriter, r *http.Request) {
-	var invalidIntent service.FollowIntent
-
-	err := json.NewDecoder(r.Body).Decode(&invalidIntent)
+func (c AppContext) FollowHandler(echoContext echo.Context, id uuid.UUID, from uuid.UUID) error {
+	response, err := c.FollowService.Run(id, from)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Request params are not the expected")
-		return
+		return err
 	}
 
-	intent, err := service.NewFollowIntent(invalidIntent.To, invalidIntent.From)
-
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	response, err := c.FollowService.Run(intent)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-	} else {
-		respondWithJSON(w, http.StatusOK, response)
-	}
+	return echoContext.JSON(http.StatusOK, response)
 }
 
 func (c *AppContext) UnfollowHandler(w http.ResponseWriter, r *http.Request) {
