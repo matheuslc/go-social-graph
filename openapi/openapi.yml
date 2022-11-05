@@ -106,7 +106,7 @@ components:
           format: uuid
         content:
           type: string
-          maxLength: 10
+          maxLength: 144
       required:
         - user_id
         - content
