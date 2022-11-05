@@ -1,5 +1,7 @@
 package service
 
+//go:generate mockgen -source=./unfollow_service.go -destination=../mock/service/unfollow_service.go
+
 import (
 	"errors"
 	"gosocialgraph/pkg/repository"

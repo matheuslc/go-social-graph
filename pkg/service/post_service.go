@@ -1,5 +1,7 @@
 package service
 
+//go:generate mockgen -source=./post_service.go -destination=../mock/service/post_service.go
+
 import (
 	"gosocialgraph/openapi"
 	"gosocialgraph/pkg/repository"
