@@ -39,3 +39,14 @@ components:
       properties:
         username:
           type: string
+    
+    CreateUserResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        created_at:
+          type: string
+          format: date-time
