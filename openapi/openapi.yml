@@ -28,10 +28,10 @@ paths:
                   type: string
               
       responses:
-        '200':
+        201:
           description: OK
           content:
-            text/html:
+            application/json:
               schema:
                 $ref: '#/components/schemas/CreateUserResponse'
 
@@ -52,3 +52,7 @@ components:
         created_at:
           type: string
           format: date-time
+      required:
+        - id
+        - username
+        - created_at

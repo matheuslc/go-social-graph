@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"gosocialgraph/pkg/entity"
 	"time"
 
@@ -211,7 +212,7 @@ func (repo *UserRepository) Create(username string) (entity.User, error) {
 
 	persistedUser, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		result, err := transaction.Run(
-			"CREATE (u:User) SET u.uuid = $uuid, u.username = $username, u.created_at = datetime($createdAt) RETURN u.uuid, u.username",
+			"CREATE (u:User) SET u.uuid = $uuid, u.username = $username, u.created_at = datetime($createdAt) RETURN u.uuid, u.username, u.created_at",
 			map[string]interface{}{
 				"uuid":      uuid.New().String(),
 				"username":  username,
@@ -224,9 +225,12 @@ func (repo *UserRepository) Create(username string) (entity.User, error) {
 		}
 
 		if result.Next() {
+			fmt.Println(result.Record().Keys())
+
 			return entity.User{
-				ID:       uuid.MustParse(result.Record().GetByIndex(0).(string)),
-				Username: result.Record().GetByIndex(1).(string),
+				ID:        uuid.MustParse(result.Record().GetByIndex(0).(string)),
+				Username:  result.Record().GetByIndex(1).(string),
+				CreatedAt: result.Record().GetByIndex(2).(time.Time),
 			}, nil
 		}
 

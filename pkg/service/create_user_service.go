@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"gosocialgraph/openapi"
 	"gosocialgraph/pkg/entity"
 	"gosocialgraph/pkg/repository"
 )
@@ -13,8 +12,8 @@ type CreateUserService struct {
 }
 
 // Run executes everything together
-func (sv *CreateUserService) Run(intent openapi.CreateUserIntent) (entity.User, error) {
-	persistedUser, err := sv.UserRepository.FindByUsername(*intent.Username)
+func (sv *CreateUserService) Run(username string) (entity.User, error) {
+	persistedUser, err := sv.UserRepository.FindByUsername(username)
 
 	if err != nil {
 		return entity.User{}, err
@@ -24,7 +23,7 @@ func (sv *CreateUserService) Run(intent openapi.CreateUserIntent) (entity.User, 
 		return entity.User{}, errors.New("User already exists")
 	}
 
-	newUser, err := sv.UserRepository.Create(*intent.Username)
+	newUser, err := sv.UserRepository.Create(username)
 	if err != nil {
 		return entity.User{}, err
 	}

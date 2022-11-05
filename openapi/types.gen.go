@@ -9,17 +9,17 @@ import (
 	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 )
 
-// CreateUserIntent defines model for CreateUserIntent.
-type CreateUserIntent struct {
+// CreateUserResponse defines model for CreateUserResponse.
+type CreateUserResponse struct {
+	CreatedAt time.Time          `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+	Username  string             `json:"username"`
+}
+
+// CreateUserMultipartBody defines parameters for CreateUser.
+type CreateUserMultipartBody struct {
 	Username *string `json:"username,omitempty"`
 }
 
-// CreateUserResponse defines model for CreateUserResponse.
-type CreateUserResponse struct {
-	CreatedAt *time.Time          `json:"created_at,omitempty"`
-	Id        *openapi_types.UUID `json:"id,omitempty"`
-	Username  *string             `json:"username,omitempty"`
-}
-
-// CreateUserFormdataRequestBody defines body for CreateUser for application/x-www-form-urlencoded ContentType.
-type CreateUserFormdataRequestBody = CreateUserIntent
+// CreateUserMultipartRequestBody defines body for CreateUser for multipart/form-data ContentType.
+type CreateUserMultipartRequestBody CreateUserMultipartBody

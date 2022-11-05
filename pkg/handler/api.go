@@ -174,20 +174,21 @@ func (c *AppContext) ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (c *AppContext) CreateUserHandler(echoContext echo.Context) error {
+func (c AppContext) CreateUser(echoContext echo.Context) error {
 	username := echoContext.FormValue("username")
-	intent := openapi.CreateUserIntent{Username: &username}
 
-	persistedUser, err := c.CreateUserService.Run(intent)
+	persistedUser, err := c.CreateUserService.Run(username)
 	if err != nil {
 		return err
-	} else {
-		return echoContext.JSON(http.StatusOK, openapi.CreateUserResponse{
-			Id:        &persistedUser.ID,
-			CreatedAt: &persistedUser.CreatedAt,
-			Username:  &persistedUser.Username,
-		})
 	}
+
+	restResponse := openapi.CreateUserResponse{
+		Id:        persistedUser.ID,
+		CreatedAt: persistedUser.CreatedAt,
+		Username:  persistedUser.Username,
+	}
+
+	return echoContext.JSON(http.StatusCreated, restResponse)
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {

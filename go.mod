@@ -10,7 +10,6 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/neo4j/neo4j-go-driver v1.8.3
-	github.com/swaggo/http-swagger v1.2.6
 	github.com/swaggo/swag v1.8.1
 )
 
@@ -33,7 +32,6 @@ require (
 	github.com/onsi/ginkgo v1.16.4 // indirect
 	github.com/onsi/gomega v1.16.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
-	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	golang.org/x/crypto v0.1.0 // indirect
