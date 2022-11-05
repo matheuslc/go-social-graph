@@ -15,16 +15,14 @@ type FollowService struct {
 
 // FollowRunner defines the contract to run the follow usecase
 type FollowRunner interface {
-	Run(to, from uuid.UUID) (bool, error)
+	Run(to, from uuid.UUID) error
 }
 
 // Run execute the use case
-func (sv *FollowService) Run(to, from uuid.UUID) (bool, error) {
-	_, err := sv.UserRepository.Follow(to.String(), from.String())
-
-	if err != nil {
-		return false, err
+func (sv *FollowService) Run(to, from uuid.UUID) error {
+	if err := sv.UserRepository.Follow(to.String(), from.String()); err != nil {
+		return err
 	}
 
-	return true, nil
+	return nil
 }

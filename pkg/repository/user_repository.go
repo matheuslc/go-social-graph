@@ -24,12 +24,12 @@ type UserReader interface {
 
 // Follower defines functions a follower must implement
 type Follower interface {
-	Follow(from, to string) (bool, error)
+	Follow(from, to string) error
 }
 
 // Unfollower defines the small unit that needs to unfollow someone
 type Unfollower interface {
-	Unfollow(to, from string) (bool, error)
+	Unfollow(to, from string) error
 }
 
 // Creater defines how to create a new user
@@ -133,10 +133,10 @@ func (repo *UserRepository) FindByUsername(username string) (bool, error) {
 }
 
 // Follow match users and creates a relantionship between them
-func (repo *UserRepository) Follow(to, from string) (bool, error) {
+func (repo *UserRepository) Follow(to, from string) error {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	defer session.Close()
@@ -162,17 +162,17 @@ func (repo *UserRepository) Follow(to, from string) (bool, error) {
 	})
 
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	return nil
 }
 
 // Unfollow
-func (repo *UserRepository) Unfollow(to, from string) (bool, error) {
+func (repo *UserRepository) Unfollow(to, from string) error {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	defer session.Close()
@@ -198,10 +198,10 @@ func (repo *UserRepository) Unfollow(to, from string) (bool, error) {
 	})
 
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	return nil
 }
 
 // Create
