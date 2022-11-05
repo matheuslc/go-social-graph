@@ -9,6 +9,18 @@ import (
 	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 )
 
+// CreatePostRequest defines model for CreatePostRequest.
+type CreatePostRequest struct {
+	Content string             `json:"content"`
+	UserId  openapi_types.UUID `json:"user_id"`
+}
+
+// CreatePostResponse defines model for CreatePostResponse.
+type CreatePostResponse struct {
+	Content string             `json:"content"`
+	Id      openapi_types.UUID `json:"id"`
+}
+
 // CreateUserResponse defines model for CreateUserResponse.
 type CreateUserResponse struct {
 	CreatedAt time.Time          `json:"created_at"`
@@ -20,6 +32,9 @@ type CreateUserResponse struct {
 type CreateUserMultipartBody struct {
 	Username *string `json:"username,omitempty"`
 }
+
+// PostHandlerJSONRequestBody defines body for PostHandler for application/json ContentType.
+type PostHandlerJSONRequestBody = CreatePostRequest
 
 // CreateUserMultipartRequestBody defines body for CreateUser for multipart/form-data ContentType.
 type CreateUserMultipartRequestBody CreateUserMultipartBody

@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 )
 
 // MockUserPostRunner is a mock of UserPostRunner interface.
@@ -35,16 +36,16 @@ func (m *MockUserPostRunner) EXPECT() *MockUserPostRunnerMockRecorder {
 }
 
 // Run mocks base method.
-func (m *MockUserPostRunner) Run(intent service.UserPostsIntent) (service.UserPostResponse, error) {
+func (m *MockUserPostRunner) Run(userID uuid.UUID) (service.UserPostResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Run", intent)
+	ret := m.ctrl.Call(m, "Run", userID)
 	ret0, _ := ret[0].(service.UserPostResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockUserPostRunnerMockRecorder) Run(intent interface{}) *gomock.Call {
+func (mr *MockUserPostRunnerMockRecorder) Run(userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockUserPostRunner)(nil).Run), intent)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockUserPostRunner)(nil).Run), userID)
 }

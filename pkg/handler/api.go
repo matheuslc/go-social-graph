@@ -38,36 +38,19 @@ func (c *AppContext) RepostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// PostHandler godoc
-// @Summary      Creates a new post
-// @Description  Creates a new post using the user id
-// @Tags         post
-// @Accept       json
-// @Produce      json
-// @Param        user_id body string true "user_id"
-// @Param        content body string true "content"
-// @Router       /post [post]
-func (c *AppContext) PostHandler(w http.ResponseWriter, r *http.Request) {
-	var intentToValidate service.CreatePostIntent
-
-	err := json.NewDecoder(r.Body).Decode(&intentToValidate)
+func (c AppContext) PostHandler(echoContext echo.Context) error {
+	var intent openapi.CreatePostRequest
+	err := echoContext.Bind(&intent)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Request params are not the expected")
-		return
-	}
-
-	intent, err := service.NewCreatePostIntent(intentToValidate.UserId, intentToValidate.Content)
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
-		return
+		return err
 	}
 
 	response, err := c.PostService.Run(intent)
 
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Could not create a new post")
+		return err
 	} else {
-		respondWithJSON(w, http.StatusOK, response)
+		return echoContext.JSON(http.StatusCreated, response)
 	}
 }
 
@@ -160,18 +143,13 @@ func (c *AppContext) UnfollowHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (c *AppContext) ProfileHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	intent := service.ProfileIntent{
-		UserID: uuid.MustParse(vars["user_id"]),
+func (c AppContext) ProfileHandler(echoContext echo.Context, userID uuid.UUID) error {
+	response, err := c.ProfileService.Run(userID)
+	if err != nil {
+		return err
 	}
 
-	response, err := c.ProfileService.Run(intent)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-	} else {
-		respondWithJSON(w, http.StatusOK, response)
-	}
+	return echoContext.JSON(http.StatusOK, response)
 }
 
 func (c AppContext) CreateUser(echoContext echo.Context) error {

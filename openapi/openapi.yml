@@ -26,7 +26,6 @@ paths:
               properties:
                 username:
                   type: string
-              
       responses:
         201:
           description: OK
@@ -34,6 +33,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateUserResponse'
+  
+  /api/profile/{user_id}:
+    get:
+      summary: Retrieve user profile information
+      operationId: profileHandler
+      tags:
+        - user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponse'
+
+  /api/post:
+    post:
+      summary: Create a new post for an user
+      operationId: postHandler
+      tags:
+        - post
+      requestBody:
+        description: which user and content
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePostRequest'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePostResponse'
+
 
 components:
   schemas:
@@ -56,3 +98,26 @@ components:
         - id
         - username
         - created_at
+
+    CreatePostRequest:
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+          maxLength: 10
+      required:
+        - user_id
+        - content
+
+    CreatePostResponse:
+      properties:
+        id:
+          type: string
+          format: uuid
+        content:
+          type: string
+      required:
+        - id
+        - content

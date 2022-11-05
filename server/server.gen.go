@@ -4,11 +4,22 @@
 package server
 
 import (
+	"fmt"
+	"net/http"
+
+	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 	"github.com/labstack/echo/v4"
 )
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Create a new post for an user
+	// (POST /api/post)
+	PostHandler(ctx echo.Context) error
+	// Retrieve user profile information
+	// (GET /api/profile/{user_id})
+	ProfileHandler(ctx echo.Context, userId openapi_types.UUID) error
 	// Create a new user
 	// (POST /api/user)
 	CreateUser(ctx echo.Context) error
@@ -17,6 +28,31 @@ type ServerInterface interface {
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler ServerInterface
+}
+
+// PostHandler converts echo context to params.
+func (w *ServerInterfaceWrapper) PostHandler(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.PostHandler(ctx)
+	return err
+}
+
+// ProfileHandler converts echo context to params.
+func (w *ServerInterfaceWrapper) ProfileHandler(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "user_id" -------------
+	var userId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "user_id", runtime.ParamLocationPath, ctx.Param("user_id"), &userId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.ProfileHandler(ctx, userId)
+	return err
 }
 
 // CreateUser converts echo context to params.
@@ -56,6 +92,8 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
+	router.POST(baseURL+"/api/post", wrapper.PostHandler)
+	router.GET(baseURL+"/api/profile/:user_id", wrapper.ProfileHandler)
 	router.POST(baseURL+"/api/user", wrapper.CreateUser)
 
 }

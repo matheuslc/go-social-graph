@@ -7,11 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// FindUserIntent defines what you need to execute the usecase
-type FindUserIntent struct {
-	UserID uuid.UUID `json:"user_id"`
-}
-
 // FindUserResponse defines the usecase response.
 type FindUserResponse struct {
 	entity.User `json:"user"`
@@ -24,12 +19,12 @@ type FindUserService struct {
 
 // FindUserRunner
 type FindUserRunner interface {
-	Run(intent FindUserIntent) (FindUserResponse, error)
+	Run(userID uuid.UUID) (FindUserResponse, error)
 }
 
 // Run executes the use case
-func (sv FindUserService) Run(intent FindUserIntent) (FindUserResponse, error) {
-	user, err := sv.UserRepository.Find(intent.UserID.String())
+func (sv FindUserService) Run(userID uuid.UUID) (FindUserResponse, error) {
+	user, err := sv.UserRepository.Find(userID)
 
 	if err != nil {
 		return FindUserResponse{}, err
