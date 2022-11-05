@@ -65,6 +65,38 @@ paths:
       responses:
         200:
           description: OK
+
+  /api/user/{id}/unfollow/{from}:
+    post:
+      summary: Unfollow a user
+      operationId: unfollowHandler
+      tags:
+        - user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: from
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                    from:
+                      type: string
+                      format: uuid
+      responses:
+        200:
+          description: OK
     
   
   /api/profile/{user_id}:

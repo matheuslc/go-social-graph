@@ -96,28 +96,19 @@ func (c *AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c AppContext) FollowHandler(echoContext echo.Context, id uuid.UUID, from uuid.UUID) error {
-	response, err := c.FollowService.Run(id, from)
-	if err != nil {
+	if err := c.FollowService.Run(id, from); err != nil {
 		return err
 	}
 
-	return echoContext.JSON(http.StatusOK, response)
+	return echoContext.NoContent(http.StatusOK)
 }
 
-func (c *AppContext) UnfollowHandler(w http.ResponseWriter, r *http.Request) {
-	var unfollowIntent service.UnfollowIntent
-
-	err := json.NewDecoder(r.Body).Decode(&unfollowIntent)
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Request params are not the expected")
+func (c AppContext) UnfollowHandler(echoContext echo.Context, id uuid.UUID, from uuid.UUID) error {
+	if err := c.UnfollowService.Run(id, from); err != nil {
+		return err
 	}
 
-	_, err = c.UnfollowService.Run(unfollowIntent)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-	} else {
-		respondWithJSON(w, http.StatusOK, "ok")
-	}
+	return echoContext.NoContent(http.StatusOK)
 }
 
 func (c AppContext) ProfileHandler(echoContext echo.Context, userID uuid.UUID) error {

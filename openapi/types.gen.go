@@ -38,6 +38,11 @@ type FollowHandlerJSONBody struct {
 	From *openapi_types.UUID `json:"from,omitempty"`
 }
 
+// UnfollowHandlerJSONBody defines parameters for UnfollowHandler.
+type UnfollowHandlerJSONBody struct {
+	From *openapi_types.UUID `json:"from,omitempty"`
+}
+
 // PostHandlerJSONRequestBody defines body for PostHandler for application/json ContentType.
 type PostHandlerJSONRequestBody = CreatePostRequest
 
@@ -46,3 +51,6 @@ type CreateUserMultipartRequestBody CreateUserMultipartBody
 
 // FollowHandlerJSONRequestBody defines body for FollowHandler for application/json ContentType.
 type FollowHandlerJSONRequestBody FollowHandlerJSONBody
+
+// UnfollowHandlerJSONRequestBody defines body for UnfollowHandler for application/json ContentType.
+type UnfollowHandlerJSONRequestBody UnfollowHandlerJSONBody

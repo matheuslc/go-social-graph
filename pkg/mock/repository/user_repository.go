@@ -89,12 +89,11 @@ func (m *MockFollower) EXPECT() *MockFollowerMockRecorder {
 }
 
 // Follow mocks base method.
-func (m *MockFollower) Follow(from, to string) (bool, error) {
+func (m *MockFollower) Follow(from, to string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Follow", from, to)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Follow indicates an expected call of Follow.
@@ -127,12 +126,11 @@ func (m *MockUnfollower) EXPECT() *MockUnfollowerMockRecorder {
 }
 
 // Unfollow mocks base method.
-func (m *MockUnfollower) Unfollow(to, from string) (bool, error) {
+func (m *MockUnfollower) Unfollow(to, from string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Unfollow", to, from)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Unfollow indicates an expected call of Unfollow.
@@ -218,12 +216,11 @@ func (mr *MockUserWriterMockRecorder) Create(username interface{}) *gomock.Call 
 }
 
 // Follow mocks base method.
-func (m *MockUserWriter) Follow(from, to string) (bool, error) {
+func (m *MockUserWriter) Follow(from, to string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Follow", from, to)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Follow indicates an expected call of Follow.
@@ -233,12 +230,11 @@ func (mr *MockUserWriterMockRecorder) Follow(from, to interface{}) *gomock.Call 
 }
 
 // Unfollow mocks base method.
-func (m *MockUserWriter) Unfollow(to, from string) (bool, error) {
+func (m *MockUserWriter) Unfollow(to, from string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Unfollow", to, from)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Unfollow indicates an expected call of Unfollow.
@@ -316,12 +312,11 @@ func (mr *MockUserReaderWriterMockRecorder) FindByUsername(username interface{})
 }
 
 // Follow mocks base method.
-func (m *MockUserReaderWriter) Follow(from, to string) (bool, error) {
+func (m *MockUserReaderWriter) Follow(from, to string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Follow", from, to)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Follow indicates an expected call of Follow.
@@ -331,12 +326,11 @@ func (mr *MockUserReaderWriterMockRecorder) Follow(from, to interface{}) *gomock
 }
 
 // Unfollow mocks base method.
-func (m *MockUserReaderWriter) Unfollow(to, from string) (bool, error) {
+func (m *MockUserReaderWriter) Unfollow(to, from string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Unfollow", to, from)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Unfollow indicates an expected call of Unfollow.

@@ -5,10 +5,10 @@
 package mock_service
 
 import (
-	service "gosocialgraph/pkg/service"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 )
 
 // MockUnfolowRunner is a mock of UnfolowRunner interface.
@@ -35,16 +35,15 @@ func (m *MockUnfolowRunner) EXPECT() *MockUnfolowRunnerMockRecorder {
 }
 
 // Run mocks base method.
-func (m *MockUnfolowRunner) Run(intent service.UnfollowIntent) (bool, error) {
+func (m *MockUnfolowRunner) Run(to, from uuid.UUID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Run", intent)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret := m.ctrl.Call(m, "Run", to, from)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockUnfolowRunnerMockRecorder) Run(intent interface{}) *gomock.Call {
+func (mr *MockUnfolowRunnerMockRecorder) Run(to, from interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockUnfolowRunner)(nil).Run), intent)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockUnfolowRunner)(nil).Run), to, from)
 }

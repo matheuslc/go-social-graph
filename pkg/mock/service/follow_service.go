@@ -35,12 +35,11 @@ func (m *MockFollowRunner) EXPECT() *MockFollowRunnerMockRecorder {
 }
 
 // Run mocks base method.
-func (m *MockFollowRunner) Run(to, from uuid.UUID) (bool, error) {
+func (m *MockFollowRunner) Run(to, from uuid.UUID) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Run", to, from)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Run indicates an expected call of Run.
