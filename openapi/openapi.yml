@@ -1,0 +1,36 @@
+openapi: 3.0.0
+servers:
+  - description: Social Graph Development
+    url: http://localhost:3010/
+
+info:
+  version: "1.0.0"
+  title: Go Social Graph API
+  description: >-
+    This is an example of using OAuth2 Access Code Flow in a specification to
+    describe security to your API.
+
+paths:
+  /api/user:
+    post:
+      summary: Create a new user
+      tags:
+      - user
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required:
+                - username
+      responses:
+        '200':
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string

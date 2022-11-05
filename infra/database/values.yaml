@@ -1,0 +1,17 @@
+neo4j:
+  resources:
+    cpu: "0.5"
+    memory: "2Gi"
+
+  password: "strongpassword"
+
+  # Uncomment to use enterprise edition
+  #edition: "enterprise"
+  #acceptLicenseAgreement: "yes"
+
+volumes:
+  data:
+    mode: defaultStorageClass
+    defaultStorageClass:
+      requests:
+        storage: 2Gi
