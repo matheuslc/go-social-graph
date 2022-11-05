@@ -20,7 +20,7 @@ import (
 // @Param        quote body string false "string"
 // @Router       /repost [post]
 func (c *AppContext) RepostHandler(w http.ResponseWriter, r *http.Request) {
-	var intent service.CreatePostIntent
+	var intent service.RepostIntent
 
 	err := json.NewDecoder(r.Body).Decode(&intent)
 	if err != nil {
