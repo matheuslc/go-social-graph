@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-X main.APIVersion=${{github.ref_name}} -X main.Environment=production" -o gosocialgraph cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-X main.APIVersion=$GITHUB_REF_NAME -X main.Environment=production" -o gosocialgraph cmd/main.go
 
 # Final image
 FROM alpine:latest
