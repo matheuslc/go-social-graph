@@ -2,7 +2,7 @@
 load('ext://restart_process', 'docker_build_with_restart')
 load('ext://helm_remote', 'helm_remote')
 
-compile_cmd = 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/api ./cmd/main.go'
+compile_cmd = 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-X main.APIVersion=development -X main.Environment=development" -o build/api ./cmd/main.go'
 
 # Compile locally and push to docker
 local_resource(
