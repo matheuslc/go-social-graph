@@ -19,7 +19,7 @@ func TestFindUserRun(t *testing.T) {
 	expectedUserFound := entity.User{ID: userID}
 
 	repo := mock.NewMockUserReader(controller)
-	repo.EXPECT().Find(userID.String()).Return(expectedUserFound, nil)
+	repo.EXPECT().Find(userID).Return(expectedUserFound, nil)
 
 	service := service.FindUserService{UserRepository: repo}
 
@@ -37,7 +37,7 @@ func TestFindUserFailRun(t *testing.T) {
 	empty := entity.User{}
 
 	repo := mock.NewMockUserReader(controller)
-	repo.EXPECT().Find(userID.String()).Return(empty, errors.New("Fake error"))
+	repo.EXPECT().Find(userID).Return(empty, errors.New("Fake error"))
 
 	service := service.FindUserService{UserRepository: repo}
 

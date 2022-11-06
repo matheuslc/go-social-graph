@@ -19,9 +19,9 @@ func TestStatsRun(t *testing.T) {
 	expectedPosts := 20
 	expectedFollowing := 100
 
-	repo.EXPECT().CountFollowers(userID.String()).Return(int64(expectedFollowers), nil)
-	repo.EXPECT().CountPosts(userID.String()).Return(int64(expectedPosts), nil)
-	repo.EXPECT().CountFollowing(userID.String()).Return(int64(expectedFollowing), nil)
+	repo.EXPECT().CountFollowers(userID).Return(int64(expectedFollowers), nil)
+	repo.EXPECT().CountPosts(userID).Return(int64(expectedPosts), nil)
+	repo.EXPECT().CountFollowing(userID).Return(int64(expectedFollowing), nil)
 
 	sv := service.StatsService{repo}
 
@@ -53,9 +53,9 @@ func TestStatsFailRun(t *testing.T) {
 	secondError := errors.New("second error")
 	thirdError := errors.New("third error")
 
-	repo.EXPECT().CountFollowers(userID.String()).Return(int64(0), firstError)
-	repo.EXPECT().CountPosts(userID.String()).Return(int64(0), secondError)
-	repo.EXPECT().CountFollowing(userID.String()).Return(int64(0), thirdError)
+	repo.EXPECT().CountFollowers(userID).Return(int64(0), firstError)
+	repo.EXPECT().CountPosts(userID).Return(int64(0), secondError)
+	repo.EXPECT().CountFollowing(userID).Return(int64(0), thirdError)
 
 	sv := service.StatsService{repo}
 

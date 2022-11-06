@@ -15,15 +15,14 @@ func TestRepostRun(t *testing.T) {
 	userID := uuid.New()
 	parentPostID := uuid.New()
 	quote := "retweet quote"
-	intent := service.RepostIntent{UserID: userID, ParentPostID: parentPostID, Quote: quote}
 
 	repo := mock_repository.NewMockReposter(controller)
-	repo.EXPECT().Repost(intent.UserID.String(), intent.ParentPostID.String(), intent.Quote).Return(true, nil)
+	repo.EXPECT().Repost(userID.String(), parentPostID.String(), quote).Return(nil)
 
 	sv := service.RepostService{Repository: repo}
 
-	result, err := sv.Run(intent)
-	if err != nil || result.Status != true {
+	err := sv.Run(userID, parentPostID, quote)
+	if err != nil {
 		t.Errorf("Expected a repost to be successful made. Got %s", err)
 	}
 }

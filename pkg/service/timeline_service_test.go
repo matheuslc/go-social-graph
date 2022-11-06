@@ -16,7 +16,6 @@ func TestFollowingRun(t *testing.T) {
 	controller := gomock.NewController(t)
 
 	userID := uuid.New()
-	userFollowers := service.FollowingIntent{UserID: userID}
 	timelineUser := entity.User{ID: userID}
 	repo := mock_repository.NewMockTimelineReader(controller)
 	posts := []entity.UserPost{}
@@ -27,18 +26,17 @@ func TestFollowingRun(t *testing.T) {
 
 	posts = append(posts, userPost, userSecondPost)
 
-	repo.EXPECT().TimelineFor(userFollowers.UserID).Return(posts, nil)
+	repo.EXPECT().TimelineFor(userID).Return(posts, nil)
 
-	intent := service.FollowingIntent{UserID: userID}
 	sv := service.TimelineServive{Repository: repo}
 
-	result, err := sv.Run(intent)
+	result, err := sv.Run(userID)
 	if err != nil {
 		t.Errorf("Expected a timeline for user. Got error")
 	}
 
 	expectLength := len(posts)
-	postLength := len(result.Posts)
+	postLength := len(*result.Posts)
 	if postLength != expectLength {
 		t.Errorf("Expect %d, got %d ", expectLength, postLength)
 	}
@@ -48,7 +46,6 @@ func TestFollowingFailRun(t *testing.T) {
 	controller := gomock.NewController(t)
 
 	userID := uuid.New()
-	userFollowers := service.FollowingIntent{UserID: userID}
 	timelineUser := entity.User{ID: userID}
 	repo := mock_repository.NewMockTimelineReader(controller)
 	posts := []entity.UserPost{}
@@ -57,13 +54,12 @@ func TestFollowingFailRun(t *testing.T) {
 
 	posts = append(posts, userPost)
 
-	repo.EXPECT().TimelineFor(userFollowers.UserID).Return(posts, errors.New("Fake error"))
+	repo.EXPECT().TimelineFor(userID).Return(posts, errors.New("Fake error"))
 
-	intent := service.FollowingIntent{UserID: userID}
-	sv := service.FollowingService{Repository: repo}
+	sv := service.TimelineServive{Repository: repo}
 
-	result, err := sv.Run(intent)
+	_, err := sv.Run(userID)
 	if err == nil {
-		t.Errorf("Expected an error for user time. Result: %s", result)
+		t.Errorf("Expected an error for user time")
 	}
 }
