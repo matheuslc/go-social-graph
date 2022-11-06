@@ -5,10 +5,10 @@
 package mock_service
 
 import (
-	service "gosocialgraph/pkg/service"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 )
 
 // MockRepostRunner is a mock of RepostRunner interface.
@@ -35,16 +35,16 @@ func (m *MockRepostRunner) EXPECT() *MockRepostRunnerMockRecorder {
 }
 
 // Run mocks base method.
-func (m *MockRepostRunner) Run(intent service.RepostIntent) (bool, error) {
+func (m *MockRepostRunner) Run(userID, parentID uuid.UUID, quote string) (bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Run", intent)
+	ret := m.ctrl.Call(m, "Run", userID, parentID, quote)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockRepostRunnerMockRecorder) Run(intent interface{}) *gomock.Call {
+func (mr *MockRepostRunnerMockRecorder) Run(userID, parentID, quote interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockRepostRunner)(nil).Run), intent)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockRepostRunner)(nil).Run), userID, parentID, quote)
 }

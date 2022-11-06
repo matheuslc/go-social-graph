@@ -178,17 +178,14 @@ func dataMapper(result neo4j.Result) ([]entity.UserPost, error) {
 				Post: parsedPost,
 			}
 
-			repost := entity.Repost{
+			repost := entity.Post{
 				ID:        uuid.MustParse(id.(string)),
-				Quote:     quote.(string),
-				Parent:    repostWithUser,
+				Parent:    &repostWithUser,
+				Content:   quote.(string),
 				CreatedAt: createdAt.(time.Time),
 			}
 
-			userPost := entity.UserPost{
-				User: postIsFrom,
-				Post: repost,
-			}
+			userPost := entity.UserPost{User: postIsFrom, Post: repost}
 
 			list = append(list, userPost)
 		} else {
