@@ -5,8 +5,9 @@ on:
     branches:    
       - main
       - 'releases/**'
-    tags:
-      - "*"
+  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   push_to_registry:
