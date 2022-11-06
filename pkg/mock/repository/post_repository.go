@@ -73,12 +73,11 @@ func (m *MockReposter) EXPECT() *MockReposterMockRecorder {
 }
 
 // Repost mocks base method.
-func (m *MockReposter) Repost(user, parentID, quote string) (bool, error) {
+func (m *MockReposter) Repost(user, parentID, quote string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Repost", user, parentID, quote)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Repost indicates an expected call of Repost.

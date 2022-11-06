@@ -17,6 +17,9 @@ type ServerInterface interface {
 	// Create a new post for an user
 	// (POST /api/post)
 	PostHandler(ctx echo.Context) error
+	// Repost an user post
+	// (POST /api/post/{id}/repost)
+	RepostHandler(ctx echo.Context, id openapi_types.UUID) error
 	// Retrieve user profile information
 	// (GET /api/profile/{user_id})
 	ProfileHandler(ctx echo.Context, userId openapi_types.UUID) error
@@ -26,6 +29,9 @@ type ServerInterface interface {
 	// Follows a user
 	// (POST /api/user/{id}/follow/{from})
 	FollowHandler(ctx echo.Context, id openapi_types.UUID, from openapi_types.UUID) error
+	// Retrieve the timeline for a user
+	// (GET /api/user/{id}/timeline)
+	TimelineHandler(ctx echo.Context, id openapi_types.UUID) error
 	// Unfollow a user
 	// (POST /api/user/{id}/unfollow/{from})
 	UnfollowHandler(ctx echo.Context, id openapi_types.UUID, from openapi_types.UUID) error
@@ -42,6 +48,22 @@ func (w *ServerInterfaceWrapper) PostHandler(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.PostHandler(ctx)
+	return err
+}
+
+// RepostHandler converts echo context to params.
+func (w *ServerInterfaceWrapper) RepostHandler(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.RepostHandler(ctx, id)
 	return err
 }
 
@@ -91,6 +113,22 @@ func (w *ServerInterfaceWrapper) FollowHandler(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.FollowHandler(ctx, id, from)
+	return err
+}
+
+// TimelineHandler converts echo context to params.
+func (w *ServerInterfaceWrapper) TimelineHandler(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.TimelineHandler(ctx, id)
 	return err
 }
 
@@ -147,9 +185,11 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	}
 
 	router.POST(baseURL+"/api/post", wrapper.PostHandler)
+	router.POST(baseURL+"/api/post/:id/repost", wrapper.RepostHandler)
 	router.GET(baseURL+"/api/profile/:user_id", wrapper.ProfileHandler)
 	router.POST(baseURL+"/api/user", wrapper.CreateUser)
 	router.POST(baseURL+"/api/user/:id/follow/:from", wrapper.FollowHandler)
+	router.GET(baseURL+"/api/user/:id/timeline", wrapper.TimelineHandler)
 	router.POST(baseURL+"/api/user/:id/unfollow/:from", wrapper.UnfollowHandler)
 
 }

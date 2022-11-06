@@ -18,7 +18,7 @@ type PostWriter interface {
 
 // Reposter defines the contract for how we can repost a post
 type Reposter interface {
-	Repost(user, parentID, quote string) (bool, error)
+	Repost(user, parentID, quote string) error
 }
 
 // PostRepository holds the repository dependencies
@@ -88,10 +88,10 @@ func (repo *PostRepository) Create(userID, content string) (entity.Post, error) 
 }
 
 // Repost creates a new post within the original post and more content
-func (repo *PostRepository) Repost(userID, parentID, quote string) (bool, error) {
+func (repo *PostRepository) Repost(userID, parentID, quote string) error {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
-		return false, fmt.Errorf("could not create a new session for Create query")
+		return fmt.Errorf("could not create a new session for Create query")
 	}
 	defer session.Close()
 
@@ -114,8 +114,8 @@ func (repo *PostRepository) Repost(userID, parentID, quote string) (bool, error)
 	})
 
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	return true, nil
+	return nil
 }

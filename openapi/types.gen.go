@@ -28,6 +28,39 @@ type CreateUserResponse struct {
 	Username  string             `json:"username"`
 }
 
+// Post defines model for Post.
+type Post struct {
+	Content   string             `json:"content"`
+	CreatedAt time.Time          `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+	Parent    *UserPost          `json:"parent,omitempty"`
+	Quote     *string            `json:"quote,omitempty"`
+}
+
+// RepostIntent defines model for RepostIntent.
+type RepostIntent struct {
+	Parent openapi_types.UUID `json:"parent"`
+	Quote  *string            `json:"quote,omitempty"`
+}
+
+// TimelineResponse defines model for TimelineResponse.
+type TimelineResponse struct {
+	Posts *[]UserPost `json:"posts,omitempty"`
+}
+
+// User defines model for User.
+type User struct {
+	CreatedAt time.Time          `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+	Username  string             `json:"username"`
+}
+
+// UserPost defines model for UserPost.
+type UserPost struct {
+	Post Post `json:"post"`
+	User User `json:"user"`
+}
+
 // CreateUserMultipartBody defines parameters for CreateUser.
 type CreateUserMultipartBody struct {
 	Username *string `json:"username,omitempty"`
@@ -45,6 +78,9 @@ type UnfollowHandlerJSONBody struct {
 
 // PostHandlerJSONRequestBody defines body for PostHandler for application/json ContentType.
 type PostHandlerJSONRequestBody = CreatePostRequest
+
+// RepostHandlerJSONRequestBody defines body for RepostHandler for application/json ContentType.
+type RepostHandlerJSONRequestBody = RepostIntent
 
 // CreateUserMultipartRequestBody defines body for CreateUser for multipart/form-data ContentType.
 type CreateUserMultipartRequestBody CreateUserMultipartBody

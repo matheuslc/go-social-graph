@@ -30,7 +30,7 @@ func TestFollowingRun(t *testing.T) {
 	repo.EXPECT().TimelineFor(userFollowers.UserID).Return(posts, nil)
 
 	intent := service.FollowingIntent{UserID: userID}
-	sv := service.FollowingService{Repository: repo}
+	sv := service.TimelineServive{Repository: repo}
 
 	result, err := sv.Run(intent)
 	if err != nil {

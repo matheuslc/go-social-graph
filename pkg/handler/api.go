@@ -3,39 +3,23 @@ package handler
 import (
 	"encoding/json"
 	"gosocialgraph/openapi"
-	"gosocialgraph/pkg/service"
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	"github.com/labstack/echo/v4"
 )
 
-// RepostHandler godoc
-// @Summary      Repost a post from someone
-// @Description  Creates a respost from a post
-// @Tags         repost
-// @Accept       json
-// @Produce      json
-// @Param        user_id body string true "user_id"
-// @Param        parent_id body string true "parent_id"
-// @Param        quote body string false "string"
-// @Router       /repost [post]
-func (c *AppContext) RepostHandler(w http.ResponseWriter, r *http.Request) {
-	var intent service.RepostIntent
-
-	err := json.NewDecoder(r.Body).Decode(&intent)
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Request params are not the expected")
+func (c AppContext) RepostHandler(echoContext echo.Context, id uuid.UUID) error {
+	var intent openapi.RepostIntent
+	if err := echoContext.Bind(&intent); err != nil {
+		return err
 	}
 
-	_, err = c.RepostService.Run(intent)
-
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Could not repost")
-	} else {
-		w.WriteHeader(http.StatusCreated)
+	if err := c.RepostService.Run(id, intent.Parent, *intent.Quote); err != nil {
+		return err
 	}
+
+	return echoContext.NoContent(http.StatusOK)
 }
 
 func (c AppContext) PostHandler(echoContext echo.Context) error {
@@ -54,27 +38,13 @@ func (c AppContext) PostHandler(echoContext echo.Context) error {
 	}
 }
 
-// FollowingHandler godoc
-// @Summary      Starts to follow an user
-// @Tags         follow
-// @Accept       json
-// @Produce      json
-// @Param        user_id body string true "user_id"
-// @Success 	 200 {object} service.FollowingResponse
-// @Router       /follow [post]
-func (c *AppContext) FollowingHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	intent := service.FollowingIntent{
-		UserID: uuid.MustParse(vars["user_id"]),
-	}
-
-	response, err := c.FollowingService.Run(intent)
-
+func (c AppContext) TimelineHandler(echoContext echo.Context, id uuid.UUID) error {
+	response, err := c.TimelineServive.Run(id)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Could not list all posts")
-	} else {
-		respondWithJSON(w, http.StatusOK, response)
+		return err
 	}
+
+	return echoContext.JSON(http.StatusOK, response)
 }
 
 // AllPostsHandler godoc

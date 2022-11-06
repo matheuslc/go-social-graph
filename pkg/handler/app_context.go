@@ -25,9 +25,9 @@ type AppContext struct {
 	UserRepository    *repository.UserRepository
 	StatsService      *service.StatsService
 
-	AllService       *service.AllService
-	FollowingService *service.FollowingService
-	ProfileService   *service.ProfileService
+	AllService      *service.AllService
+	TimelineServive *service.TimelineServive
+	ProfileService  *service.ProfileService
 
 	FollowService   *service.FollowService
 	UnfollowService *service.UnfollowService
@@ -73,7 +73,7 @@ func NewAppContext() AppContext {
 		},
 		CreateUserService: &service.CreateUserService{UserRepository: &userRepository},
 		AllService:        &service.AllService{Repository: &timelineRepository},
-		FollowingService:  &service.FollowingService{Repository: &timelineRepository},
+		TimelineServive:   &service.TimelineServive{Repository: &timelineRepository},
 		FollowService:     &service.FollowService{UserRepository: &userRepository},
 		UnfollowService:   &service.UnfollowService{Repository: &userRepository},
 		PostService:       &service.PostService{Repository: &postRepository},
