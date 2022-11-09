@@ -46,7 +46,12 @@ helm_remote(
   repo_name='nginx-stable',
   repo_url='https://helm.nginx.com/stable',
   namespace='internal',
-  set='controller.logLevel=2'
+  set=['controller.metrics.enabled=true', 'controller.metrics.serviceMonitor=true']
+)
+
+k8s_resource(
+  'nginx-ingress-nginx-ingress',
+  port_forwards=['9113:9113', '80:80', '443:443'],
 )
 
 k8s_yaml('./infra/service/ingress.yml')
