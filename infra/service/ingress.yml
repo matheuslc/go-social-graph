@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+  namespace: internal
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: social-graph.localdev.me
+    http:
+      paths:
+      - backend:
+          service:
+              name: social-graph-api
+              port:
+                number: 3010
+        path: /api
+        pathType: Prefix
