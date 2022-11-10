@@ -17,3 +17,6 @@
 # Build
 
 build/
+
+# Cov
+profile.cov

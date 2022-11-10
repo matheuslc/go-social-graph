@@ -37,6 +37,13 @@ type Post struct {
 	Quote     *string            `json:"quote,omitempty"`
 }
 
+// ProfileResponse defines model for ProfileResponse.
+type ProfileResponse struct {
+	Posts *[]UserPost `json:"posts,omitempty"`
+	Stats *UserStats  `json:"stats,omitempty"`
+	User  *User       `json:"user,omitempty"`
+}
+
 // RepostIntent defines model for RepostIntent.
 type RepostIntent struct {
 	Parent openapi_types.UUID `json:"parent"`
@@ -59,6 +66,13 @@ type User struct {
 type UserPost struct {
 	Post Post `json:"post"`
 	User User `json:"user"`
+}
+
+// UserStats defines model for UserStats.
+type UserStats struct {
+	Followers  *int `json:"followers,omitempty"`
+	Following  *int `json:"following,omitempty"`
+	PostsCount *int `json:"posts_count,omitempty"`
 }
 
 // CreateUserMultipartBody defines parameters for CreateUser.

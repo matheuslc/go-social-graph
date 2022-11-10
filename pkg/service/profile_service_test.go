@@ -39,9 +39,8 @@ func TestProfileRun(t *testing.T) {
 	posts := []entity.UserPost{}
 	posts = append(posts, entity.UserPost{User: user, Post: firstPost}, entity.UserPost{User: user, Post: secondPost})
 
-	userPostResponse := service.UserPostResponse{Posts: posts}
 	userPostService := mock_service.NewMockUserPostRunner(controller)
-	userPostService.EXPECT().Run(userID).Return(userPostResponse, nil)
+	userPostService.EXPECT().Run(userID).Return(posts, nil)
 
 	sv := service.ProfileService{
 		FindUserService: findUserService,
@@ -63,7 +62,7 @@ func TestProfileRun(t *testing.T) {
 	}
 
 	lengthExpected := 2
-	actualLength := len(result.Posts.Posts)
+	actualLength := len(result.Posts)
 	if actualLength != lengthExpected {
 		t.Errorf("User lenght different than the expected. Expect: %d. Got: %d", lengthExpected, actualLength)
 	}

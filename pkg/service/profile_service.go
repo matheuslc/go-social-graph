@@ -11,9 +11,9 @@ import (
 // ProfileResponse defines the response from the use case, which in this case
 // are going to be all information related to the user profile
 type ProfileResponse struct {
-	User  entity.User      `json:"user"`
-	Stats ProfileStats     `json:"stats"`
-	Posts UserPostResponse `json:"posts"`
+	User  entity.User       `json:"user"`
+	Stats ProfileStats      `json:"stats"`
+	Posts []entity.UserPost `json:"posts"`
 }
 
 // ProfileService holds all dependencies a profile service must have

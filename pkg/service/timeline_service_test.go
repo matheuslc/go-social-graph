@@ -36,7 +36,7 @@ func TestFollowingRun(t *testing.T) {
 	}
 
 	expectLength := len(posts)
-	postLength := len(*result.Posts)
+	postLength := len(result)
 	if postLength != expectLength {
 		t.Errorf("Expect %d, got %d ", expectLength, postLength)
 	}

@@ -13,23 +13,17 @@ type UserPostService struct {
 	Repository repository.TimelineReader
 }
 
-type UserPostResponse struct {
-	Posts []entity.UserPost `json:"posts"`
-}
-
 // UserPostRunner
 type UserPostRunner interface {
-	Run(userID uuid.UUID) (UserPostResponse, error)
+	Run(userID uuid.UUID) (posts []entity.UserPost, err error)
 }
 
-func (sv UserPostService) Run(userID uuid.UUID) (UserPostResponse, error) {
-	response, err := sv.Repository.UserPosts(userID)
+func (sv UserPostService) Run(userID uuid.UUID) (posts []entity.UserPost, err error) {
+	posts, err = sv.Repository.UserPosts(userID)
 
 	if err != nil {
-		return UserPostResponse{}, err
+		return posts, err
 	}
 
-	return UserPostResponse{
-		Posts: response,
-	}, nil
+	return posts, nil
 }

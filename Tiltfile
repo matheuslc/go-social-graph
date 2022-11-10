@@ -51,7 +51,7 @@ helm_remote(
 
 k8s_resource(
   'nginx-ingress-nginx-ingress',
-  port_forwards=['9113:9113', '80:80', '443:443'],
+  port_forwards=['9113:9113'],
 )
 
 k8s_yaml('./infra/service/ingress.yml')
