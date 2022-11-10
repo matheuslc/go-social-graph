@@ -1,17 +1,42 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	_ "gosocialgraph/docs"
 	"gosocialgraph/pkg/handler"
 	"gosocialgraph/server"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 var APIVersion = "nonset"
 var Environment = "nonset"
 
 func main() {
-	context := handler.NewAppContext()
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 
-	server.RegisterHandlers(context.Router, context)
-	context.Router.Logger.Fatal(context.Router.Start(":3010"))
+	defer cancel()
+
+	appContext := handler.NewAppContext()
+	server.RegisterHandlers(appContext.Router, appContext)
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				fmt.Println("Gracefully shutting down...")
+
+				err := appContext.Router.Shutdown(ctx)
+				if err != nil {
+					panic("could not shutdown")
+				}
+
+				return
+			}
+		}
+	}()
+
+	appContext.Router.Logger.Fatal(appContext.Router.Start(":3010"))
 }
