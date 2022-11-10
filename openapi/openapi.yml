@@ -1,7 +1,7 @@
 openapi: 3.0.0
 servers:
   - description: Social Graph Development
-    url: http://localhost:3010/
+    url: http://social-graph.localdev.me
 
 info:
   version: "1.0.0"
@@ -138,7 +138,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateUserResponse"
+                $ref: "#/components/schemas/ProfileResponse"
 
   /api/post:
     post:
@@ -286,6 +286,26 @@ components:
 
     TimelineResponse:
       properties:
+        posts:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserPost"
+
+    UserStats:
+      properties:
+        followers:
+          type: integer
+        following:
+          type: integer
+        posts_count:
+          type: integer
+
+    ProfileResponse:
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        stats:
+          $ref: "#/components/schemas/UserStats"
         posts:
           type: array
           items:

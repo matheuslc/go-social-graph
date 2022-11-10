@@ -3,6 +3,7 @@ package service
 //go:generate mockgen -source=./stats_service.go -destination=../mock/service/stats_service.go
 
 import (
+	"fmt"
 	"gosocialgraph/pkg/repository"
 	"sync"
 
@@ -64,8 +65,8 @@ func (sv StatsService) Run(userID uuid.UUID) (StatsResponse, error) {
 	go func() {
 		defer wg.Done()
 		posts, err := sv.Repository.CountPosts(userID)
-
 		if err != nil {
+			fmt.Println("err", err)
 			runningErros = append(runningErros, err)
 		}
 
@@ -75,6 +76,8 @@ func (sv StatsService) Run(userID uuid.UUID) (StatsResponse, error) {
 	wg.Wait()
 
 	if len(runningErros) > 0 {
+		fmt.Println("err")
+		fmt.Println(runningErros)
 		return StatsResponse{}, runningErros[0]
 	}
 

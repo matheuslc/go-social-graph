@@ -5,7 +5,7 @@
 package mock_service
 
 import (
-	service "gosocialgraph/pkg/service"
+	entity "gosocialgraph/pkg/entity"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -36,10 +36,10 @@ func (m *MockUserPostRunner) EXPECT() *MockUserPostRunnerMockRecorder {
 }
 
 // Run mocks base method.
-func (m *MockUserPostRunner) Run(userID uuid.UUID) (service.UserPostResponse, error) {
+func (m *MockUserPostRunner) Run(userID uuid.UUID) ([]entity.UserPost, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Run", userID)
-	ret0, _ := ret[0].(service.UserPostResponse)
+	ret0, _ := ret[0].([]entity.UserPost)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

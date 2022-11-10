@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"gosocialgraph/openapi"
+	"gosocialgraph/pkg/handler/rest"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -29,13 +30,14 @@ func (c AppContext) PostHandler(echoContext echo.Context) error {
 		return err
 	}
 
-	response, err := c.PostService.Run(intent)
-
+	post, err := c.PostService.Run(intent.UserId, intent.Content)
 	if err != nil {
 		return err
-	} else {
-		return echoContext.JSON(http.StatusCreated, response)
 	}
+
+	restPost := openapi.CreatePostResponse{Id: post.ID, Content: post.Content}
+
+	return echoContext.JSON(http.StatusCreated, restPost)
 }
 
 func (c AppContext) TimelineHandler(echoContext echo.Context, id uuid.UUID) error {
@@ -44,17 +46,14 @@ func (c AppContext) TimelineHandler(echoContext echo.Context, id uuid.UUID) erro
 		return err
 	}
 
-	return echoContext.JSON(http.StatusOK, response)
+	openapiResponse, err := rest.MapUserPostsToOpenAPI(response)
+	if err != nil {
+		return err
+	}
+
+	return echoContext.JSON(http.StatusOK, openapi.TimelineResponse{Posts: &openapiResponse})
 }
 
-// AllPostsHandler godoc
-// @Summary      List all posts
-// @Tags         follow
-// @Accept       json
-// @Produce      json
-// @Param        user_id body string true "user_id"
-// @Success 	 200 {object} service.AllPostResponse
-// @Router       /all [get]
 func (c *AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request) {
 	response, err := c.AllService.Run()
 
@@ -87,7 +86,26 @@ func (c AppContext) ProfileHandler(echoContext echo.Context, userID uuid.UUID) e
 		return err
 	}
 
-	return echoContext.JSON(http.StatusOK, response)
+	openapiPosts, err := rest.MapUserPostsToOpenAPI(response.Posts)
+	if err != nil {
+		return err
+	}
+
+	openapiResponse := openapi.ProfileResponse{
+		Posts: &openapiPosts,
+		Stats: &openapi.UserStats{
+			Followers:  &response.Stats.Followers,
+			Following:  &response.Stats.Following,
+			PostsCount: &response.Stats.PostsCount,
+		},
+		User: &openapi.User{
+			CreatedAt: response.User.CreatedAt,
+			Id:        response.User.ID,
+			Username:  response.User.Username,
+		},
+	}
+
+	return echoContext.JSON(http.StatusOK, openapiResponse)
 }
 
 func (c AppContext) CreateUser(echoContext echo.Context) error {

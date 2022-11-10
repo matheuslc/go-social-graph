@@ -3,7 +3,6 @@ package repository
 //go:generate mockgen -source=./user_repository.go -destination=../mock/repository/user_repository.go
 
 import (
-	"fmt"
 	"gosocialgraph/pkg/entity"
 	"time"
 
@@ -70,7 +69,7 @@ func (repo *UserRepository) Find(userID uuid.UUID) (entity.User, error) {
 		result, err := transaction.Run(
 			"MATCH (a:User { uuid: $userId }) RETURN a LIMIT 1",
 			map[string]interface{}{
-				"userId": userID,
+				"userId": userID.String(),
 			},
 		)
 
@@ -80,8 +79,10 @@ func (repo *UserRepository) Find(userID uuid.UUID) (entity.User, error) {
 
 		if result.Next() {
 			userProps := result.Record().GetByIndex(0).(neo4j.Node).Props()
+			uuidParsed := uuid.MustParse(userProps["uuid"].(string))
+
 			return entity.User{
-				ID:        uuid.MustParse(userProps["uuid"].(string)),
+				ID:        uuidParsed,
 				Username:  userProps["username"].(string),
 				CreatedAt: userProps["created_at"].(time.Time),
 			}, nil
@@ -227,8 +228,6 @@ func (repo *UserRepository) Create(username string) (entity.User, error) {
 		}
 
 		if result.Next() {
-			fmt.Println(result.Record().Keys())
-
 			return entity.User{
 				ID:        uuid.MustParse(result.Record().GetByIndex(0).(string)),
 				Username:  result.Record().GetByIndex(1).(string),
@@ -258,7 +257,7 @@ func (repo *UserRepository) CountFollowing(userID uuid.UUID) (int64, error) {
 		result, err := transaction.Run(
 			"MATCH (user:User { uuid: $userId })-[:FOLLOW]->(following) RETURN count(following)",
 			map[string]interface{}{
-				"userId": userID,
+				"userId": userID.String(),
 			},
 		)
 
@@ -292,7 +291,7 @@ func (repo *UserRepository) CountFollowers(userID uuid.UUID) (int64, error) {
 		result, err := transaction.Run(
 			"MATCH (user:User { uuid: $userId })<-[:FOLLOW]-(followers) RETURN count(followers)",
 			map[string]interface{}{
-				"userId": userID,
+				"userId": userID.String(),
 			},
 		)
 
@@ -325,7 +324,7 @@ func (repo *UserRepository) CountPosts(userID uuid.UUID) (int64, error) {
 		result, err := transaction.Run(
 			"MATCH (user:User { uuid: $userId })-[:TWEET|:REPOST]->(posts) RETURN count(posts)",
 			map[string]interface{}{
-				"userId": userID,
+				"userId": userID.String(),
 			},
 		)
 

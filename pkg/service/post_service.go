@@ -3,19 +3,21 @@ package service
 //go:generate mockgen -source=./post_service.go -destination=../mock/service/post_service.go
 
 import (
-	"gosocialgraph/openapi"
+	"gosocialgraph/pkg/entity"
 	"gosocialgraph/pkg/repository"
+
+	"github.com/google/uuid"
 )
 
 type PostService struct {
 	Repository repository.PostWriter
 }
 
-func (sv PostService) Run(intent openapi.CreatePostRequest) (empty openapi.CreatePostResponse, err error) {
-	post, err := sv.Repository.Create(intent.UserId.String(), intent.Content)
+func (sv PostService) Run(userID uuid.UUID, content string) (post entity.Post, err error) {
+	post, err = sv.Repository.Create(userID.String(), content)
 	if err != nil {
-		return empty, err
+		return post, err
 	}
 
-	return openapi.CreatePostResponse{Id: post.ID, Content: post.Content}, nil
+	return post, nil
 }
