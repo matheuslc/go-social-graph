@@ -37,9 +37,5 @@ func main() {
 		}
 	}()
 
-	// fmt.Println("dae")
-	// s, _ := auth.AuthService{}.Run("carmel")
-	// fmt.Println(s)
-
 	appContext.Router.Logger.Fatal(appContext.Router.Start(":3010"))
 }

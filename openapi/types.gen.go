@@ -32,6 +32,12 @@ type CreateUserResponse struct {
 	Username  string             `json:"username"`
 }
 
+// LoginResponse defines model for LoginResponse.
+type LoginResponse struct {
+	AccessToken  *string `json:"access_token,omitempty"`
+	RefreshToken *string `json:"refresh_token,omitempty"`
+}
+
 // Post defines model for Post.
 type Post struct {
 	Content   string             `json:"content"`
@@ -87,7 +93,8 @@ type LoginHandlerMultipartBody struct {
 
 // CreateUserMultipartBody defines parameters for CreateUser.
 type CreateUserMultipartBody struct {
-	Username *string `json:"username,omitempty"`
+	Password string `json:"password"`
+	Username string `json:"username"`
 }
 
 // FollowHandlerJSONBody defines parameters for FollowHandler.

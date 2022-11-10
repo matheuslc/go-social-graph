@@ -35,9 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  token:
-                    type: string
+                $ref: '#/components/schemas/LoginResponse'
 
   /api/user:
     post:
@@ -54,6 +52,12 @@ paths:
               properties:
                 username:
                   type: string
+                password:
+                  type: string
+                  format: password
+              required:
+                - username
+                - password
       responses:
         201:
           description: OK
@@ -346,3 +350,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/UserPost"
+    
+    LoginResponse:
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string

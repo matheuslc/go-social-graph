@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"gosocialgraph/openapi"
 	"gosocialgraph/pkg/handler/rest"
 	"net/http"
@@ -12,13 +11,14 @@ import (
 
 func (c AppContext) LoginHandler(echoContext echo.Context) error {
 	username := echoContext.FormValue("username")
+	passowrd := echoContext.FormValue("password")
 
-	token, err := c.AuthService.Run(username)
+	token, refresh, err := c.AuthService.Run(username, passowrd)
 	if err != nil {
 		return err
 	}
 
-	return echoContext.JSON(http.StatusOK, token)
+	return echoContext.JSON(http.StatusOK, openapi.LoginResponse{AccessToken: &token, RefreshToken: &refresh})
 }
 
 func (c AppContext) RepostHandler(echoContext echo.Context, id uuid.UUID) error {
@@ -65,15 +65,15 @@ func (c AppContext) TimelineHandler(echoContext echo.Context, id uuid.UUID) erro
 	return echoContext.JSON(http.StatusOK, openapi.TimelineResponse{Posts: &openapiResponse})
 }
 
-func (c *AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request) {
-	response, err := c.AllService.Run()
+// func (c *AppContext) AllPostsHandler(w http.ResponseWriter, r *http.Request) {
+// 	response, err := c.AllService.Run()
 
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Could not list all posts")
-	} else {
-		respondWithJSON(w, http.StatusOK, response)
-	}
-}
+// 	if err != nil {
+// 		respondWithError(w, http.StatusInternalServerError, "Could not list all posts")
+// 	} else {
+// 		respondWithJSON(w, http.StatusOK, response)
+// 	}
+// }
 
 func (c AppContext) FollowHandler(echoContext echo.Context, id uuid.UUID, from uuid.UUID) error {
 	if err := c.FollowService.Run(id, from); err != nil {
@@ -121,8 +121,9 @@ func (c AppContext) ProfileHandler(echoContext echo.Context, userID uuid.UUID) e
 
 func (c AppContext) CreateUser(echoContext echo.Context) error {
 	username := echoContext.FormValue("username")
+	password := echoContext.FormValue("password")
 
-	persistedUser, err := c.CreateUserService.Run(username)
+	persistedUser, err := c.CreateUserService.Run(username, password)
 	if err != nil {
 		return err
 	}
@@ -134,16 +135,4 @@ func (c AppContext) CreateUser(echoContext echo.Context) error {
 	}
 
 	return echoContext.JSON(http.StatusCreated, restResponse)
-}
-
-func respondWithError(w http.ResponseWriter, code int, message string) {
-	respondWithJSON(w, code, map[string]string{"error": message})
-}
-
-func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, _ := json.Marshal(payload)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(response)
 }

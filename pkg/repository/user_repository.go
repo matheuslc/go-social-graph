@@ -5,11 +5,15 @@ package repository
 import (
 	"fmt"
 	"gosocialgraph/pkg/entity"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
+	"golang.org/x/crypto/bcrypt"
 )
+
+var Salt = os.Getenv("SALT")
 
 // UserRepository defines the Graph implementation of UserRepository
 type UserRepository struct {
@@ -34,7 +38,7 @@ type Unfollower interface {
 
 // Creater defines how to create a new user
 type Creater interface {
-	Create(username string) (entity.User, error)
+	Create(username, password string) (entity.User, error)
 }
 
 // UserWriter compouns a write-only functions interface
@@ -127,6 +131,7 @@ func (repo *UserRepository) FindByUsername(username string) (user entity.User, e
 			return entity.User{
 				ID:        uuidParsed,
 				Username:  userProps["username"].(string),
+				Password:  userProps["password"].([]byte),
 				CreatedAt: userProps["created_at"].(time.Time),
 			}, nil
 		}
@@ -137,8 +142,6 @@ func (repo *UserRepository) FindByUsername(username string) (user entity.User, e
 	if err != nil {
 		return user, err
 	}
-
-	fmt.Println(userFromDatabase)
 
 	return userFromDatabase.(entity.User), nil
 }
@@ -216,19 +219,25 @@ func (repo *UserRepository) Unfollow(to, from string) error {
 }
 
 // Create
-func (repo *UserRepository) Create(username string) (entity.User, error) {
+func (repo *UserRepository) Create(username, password string) (entity.User, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return entity.User{}, err
 	}
 	defer session.Close()
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(fmt.Sprintf("%s%s", Salt, password)), 8)
+	if err != nil {
+		return entity.User{}, err
+	}
+
 	persistedUser, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		result, err := transaction.Run(
-			"CREATE (u:User) SET u.uuid = $uuid, u.username = $username, u.created_at = datetime($createdAt) RETURN u.uuid, u.username, u.created_at",
+			"CREATE (u:User) SET u.uuid = $uuid, u.username = $username, u.password = $password, u.created_at = datetime($createdAt) RETURN u.uuid, u.username, u.created_at",
 			map[string]interface{}{
 				"uuid":      uuid.New().String(),
 				"username":  username,
+				"password":  hashedPassword,
 				"createdAt": time.Now().UTC(),
 			},
 		)

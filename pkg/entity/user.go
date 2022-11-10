@@ -15,6 +15,7 @@ const UsernameMaxLength = 14
 type User struct {
 	ID        uuid.UUID `json:"id"`
 	Username  string    `json:"username"`
+	Password  []byte    `json:"password"`
 	CreatedAt time.Time `json:"created_at"`
 }
 

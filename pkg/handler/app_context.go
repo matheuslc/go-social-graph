@@ -82,8 +82,8 @@ func NewAppContext() AppContext {
 	postRepository := repository.PostRepository{Client: db}
 	timelineRepository := repository.TimelineRepository{Client: db}
 
-	token, err := auth.AuthService{Repository: &userRepository}.Run("carmel")
-	fmt.Println(token)
+	// token, err := auth.AuthService{Repository: &userRepository}.Run("dormire", "aq1dsadsad123123wdasdsadsfsafsafsafsafsaf123123123sdsafasfasfsaf")
+	// fmt.Println(token)
 
 	return AppContext{
 		Db:             &db,
