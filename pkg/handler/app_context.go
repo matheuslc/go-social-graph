@@ -40,7 +40,7 @@ type AppContext struct {
 func NewAppContext() AppContext {
 	db, err := p.New(os.Getenv("NEO4J_HOST"), os.Getenv("NEO4J_USERNAME"), os.Getenv("NEO4J_PASSWORD"))
 	if err != nil {
-		fmt.Printf("Can't connect to neo4j. Reason: %s", err)
+		panic(fmt.Errorf("Can't connect to neo4j. Reason: %s", err))
 	}
 
 	swagger, err := openapi.GetSwagger()
