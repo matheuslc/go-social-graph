@@ -9,6 +9,10 @@ import (
 	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 )
 
+const (
+	BearerAuthScopes = "BearerAuth.Scopes"
+)
+
 // CreatePostRequest defines model for CreatePostRequest.
 type CreatePostRequest struct {
 	Content string             `json:"content"`
@@ -26,6 +30,12 @@ type CreateUserResponse struct {
 	CreatedAt time.Time          `json:"created_at"`
 	Id        openapi_types.UUID `json:"id"`
 	Username  string             `json:"username"`
+}
+
+// LoginResponse defines model for LoginResponse.
+type LoginResponse struct {
+	AccessToken  *string `json:"access_token,omitempty"`
+	RefreshToken *string `json:"refresh_token,omitempty"`
 }
 
 // Post defines model for Post.
@@ -75,9 +85,16 @@ type UserStats struct {
 	PostsCount *int `json:"posts_count,omitempty"`
 }
 
+// LoginHandlerMultipartBody defines parameters for LoginHandler.
+type LoginHandlerMultipartBody struct {
+	Password *string `json:"password,omitempty"`
+	Username *string `json:"username,omitempty"`
+}
+
 // CreateUserMultipartBody defines parameters for CreateUser.
 type CreateUserMultipartBody struct {
-	Username *string `json:"username,omitempty"`
+	Password string `json:"password"`
+	Username string `json:"username"`
 }
 
 // FollowHandlerJSONBody defines parameters for FollowHandler.
@@ -89,6 +106,9 @@ type FollowHandlerJSONBody struct {
 type UnfollowHandlerJSONBody struct {
 	From *openapi_types.UUID `json:"from,omitempty"`
 }
+
+// LoginHandlerMultipartRequestBody defines body for LoginHandler for multipart/form-data ContentType.
+type LoginHandlerMultipartRequestBody LoginHandlerMultipartBody
 
 // PostHandlerJSONRequestBody defines body for PostHandler for application/json ContentType.
 type PostHandlerJSONRequestBody = CreatePostRequest

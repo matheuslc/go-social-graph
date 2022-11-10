@@ -3,12 +3,14 @@ package handler
 import (
 	"fmt"
 	"gosocialgraph/openapi"
+	"gosocialgraph/pkg/auth"
 	p "gosocialgraph/pkg/persistence"
 	"gosocialgraph/pkg/repository"
 	"gosocialgraph/pkg/service"
 	"os"
 
 	md "github.com/deepmap/oapi-codegen/pkg/middleware"
+	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/labstack/echo/v4"
 	middleware "github.com/labstack/echo/v4/middleware"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
@@ -19,6 +21,8 @@ type AppContext struct {
 	Db     *neo4j.Driver
 	Router *echo.Echo
 	Graph  *p.Graph
+
+	AuthService *auth.AuthService
 
 	FindUserService   *service.FindUserService
 	CreateUserService *service.CreateUserService
@@ -54,7 +58,12 @@ func NewAppContext() AppContext {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(md.OapiRequestValidator(swagger))
+
+	e.Use(md.OapiRequestValidatorWithOptions(swagger, &md.Options{
+		Options: openapi3filter.Options{
+			AuthenticationFunc: auth.NewAuthenticator(),
+		},
+	}))
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"social-graph.localdev.me", "localhost:3010"},
@@ -62,16 +71,29 @@ func NewAppContext() AppContext {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
+	config := middleware.JWTConfig{
+		Claims:     &auth.JwtCustomClaims{},
+		SigningKey: []byte("secret"),
+	}
+
+	e.Use(middleware.JWTWithConfig(config))
+
 	userRepository := repository.UserRepository{Client: db}
 	postRepository := repository.PostRepository{Client: db}
 	timelineRepository := repository.TimelineRepository{Client: db}
+
+	// token, err := auth.AuthService{Repository: &userRepository}.Run("dormire", "aq1dsadsad123123wdasdsadsfsafsafsafsafsaf123123123sdsafasfasfsaf")
+	// fmt.Println(token)
 
 	return AppContext{
 		Db:             &db,
 		Router:         e,
 		Graph:          &p.Graph{Client: db},
 		UserRepository: &userRepository,
-		StatsService:   &service.StatsService{Repository: &userRepository},
+		AuthService: &auth.AuthService{
+			Repository: &userRepository,
+		},
+		StatsService: &service.StatsService{Repository: &userRepository},
 		ProfileService: &service.ProfileService{
 			FindUserService: service.FindUserService{UserRepository: &userRepository},
 			StatsService:    service.StatsService{Repository: &userRepository},

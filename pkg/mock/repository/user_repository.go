@@ -51,10 +51,10 @@ func (mr *MockUserReaderMockRecorder) Find(userID interface{}) *gomock.Call {
 }
 
 // FindByUsername mocks base method.
-func (m *MockUserReader) FindByUsername(username string) (bool, error) {
+func (m *MockUserReader) FindByUsername(username string) (entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByUsername", username)
-	ret0, _ := ret[0].(bool)
+	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -163,18 +163,18 @@ func (m *MockCreater) EXPECT() *MockCreaterMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockCreater) Create(username string) (entity.User, error) {
+func (m *MockCreater) Create(username, password string) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", username)
+	ret := m.ctrl.Call(m, "Create", username, password)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockCreaterMockRecorder) Create(username interface{}) *gomock.Call {
+func (mr *MockCreaterMockRecorder) Create(username, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCreater)(nil).Create), username)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCreater)(nil).Create), username, password)
 }
 
 // MockUserWriter is a mock of UserWriter interface.
@@ -201,18 +201,18 @@ func (m *MockUserWriter) EXPECT() *MockUserWriterMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserWriter) Create(username string) (entity.User, error) {
+func (m *MockUserWriter) Create(username, password string) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", username)
+	ret := m.ctrl.Call(m, "Create", username, password)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockUserWriterMockRecorder) Create(username interface{}) *gomock.Call {
+func (mr *MockUserWriterMockRecorder) Create(username, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserWriter)(nil).Create), username)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserWriter)(nil).Create), username, password)
 }
 
 // Follow mocks base method.
@@ -267,18 +267,18 @@ func (m *MockUserReaderWriter) EXPECT() *MockUserReaderWriterMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserReaderWriter) Create(username string) (entity.User, error) {
+func (m *MockUserReaderWriter) Create(username, password string) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", username)
+	ret := m.ctrl.Call(m, "Create", username, password)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockUserReaderWriterMockRecorder) Create(username interface{}) *gomock.Call {
+func (mr *MockUserReaderWriterMockRecorder) Create(username, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserReaderWriter)(nil).Create), username)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserReaderWriter)(nil).Create), username, password)
 }
 
 // Find mocks base method.
@@ -297,10 +297,10 @@ func (mr *MockUserReaderWriterMockRecorder) Find(userID interface{}) *gomock.Cal
 }
 
 // FindByUsername mocks base method.
-func (m *MockUserReaderWriter) FindByUsername(username string) (bool, error) {
+func (m *MockUserReaderWriter) FindByUsername(username string) (entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByUsername", username)
-	ret0, _ := ret[0].(bool)
+	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

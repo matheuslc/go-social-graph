@@ -53,7 +53,7 @@ func TestProfileRun(t *testing.T) {
 		t.Errorf("Could not get user profile properly")
 	}
 
-	if result.User != user {
+	if result.User.ID != user.ID {
 		t.Errorf("User different than expected. Expect: %s. Got: %s", user.ID, result.User.ID)
 	}
 

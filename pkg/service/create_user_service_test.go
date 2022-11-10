@@ -16,10 +16,11 @@ func TestCreateUserRun(t *testing.T) {
 	defer controller.Finish()
 
 	username := "devtest"
+	password := "foo"
 
 	repo := mock.NewMockUserReaderWriter(controller)
-	repo.EXPECT().FindByUsername(username).Return(false, nil)
-	repo.EXPECT().Create(username).Return(entity.User{
+	repo.EXPECT().FindByUsername(username).Return(entity.User{}, nil)
+	repo.EXPECT().Create(username, password).Return(entity.User{
 		ID:        uuid.New(),
 		Username:  username,
 		CreatedAt: time.Now(),
@@ -27,7 +28,7 @@ func TestCreateUserRun(t *testing.T) {
 
 	sv := service.CreateUserService{UserRepository: repo}
 
-	result, err := sv.Run(username)
+	result, err := sv.Run(username, password)
 	if err != nil || len(result.Username) == 0 || result.Username != username {
 		t.Errorf("Got an error when trying to create a new user. Error: %s", err)
 	}
@@ -38,12 +39,16 @@ func TestCreateUserAlreadyExistRun(t *testing.T) {
 	defer controller.Finish()
 
 	username := "devtest"
+	password := "foo"
 	repo := mock.NewMockUserReaderWriter(controller)
-	repo.EXPECT().FindByUsername(username).Return(true, nil)
+	repo.EXPECT().FindByUsername(username).Return(entity.User{
+		ID:       uuid.New(),
+		Username: username,
+	}, nil)
 
 	sv := service.CreateUserService{UserRepository: repo}
 
-	_, err := sv.Run(username)
+	_, err := sv.Run(username, password)
 	if err == nil {
 		t.Errorf("Expect an error when trying to create a new user that already exist. Error: %s", err)
 	}

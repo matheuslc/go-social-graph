@@ -30,6 +30,8 @@ spec:
           value: neo4j
         - name: NEO4J_PASSWORD
           value: strongpassword
+        - name: SALT
+          value: strongsalt
 
 ---
 apiVersion: v1

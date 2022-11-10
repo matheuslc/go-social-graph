@@ -3,12 +3,17 @@ package repository
 //go:generate mockgen -source=./user_repository.go -destination=../mock/repository/user_repository.go
 
 import (
+	"fmt"
 	"gosocialgraph/pkg/entity"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
+	"golang.org/x/crypto/bcrypt"
 )
+
+var Salt = os.Getenv("SALT")
 
 // UserRepository defines the Graph implementation of UserRepository
 type UserRepository struct {
@@ -18,7 +23,7 @@ type UserRepository struct {
 // UserReader defines a unit for finding an user
 type UserReader interface {
 	Find(userID uuid.UUID) (entity.User, error)
-	FindByUsername(username string) (bool, error)
+	FindByUsername(username string) (entity.User, error)
 }
 
 // Follower defines functions a follower must implement
@@ -33,7 +38,7 @@ type Unfollower interface {
 
 // Creater defines how to create a new user
 type Creater interface {
-	Create(username string) (entity.User, error)
+	Create(username, password string) (entity.User, error)
 }
 
 // UserWriter compouns a write-only functions interface
@@ -99,38 +104,46 @@ func (repo *UserRepository) Find(userID uuid.UUID) (entity.User, error) {
 }
 
 // FindByUsername finds a user by its username
-func (repo *UserRepository) FindByUsername(username string) (bool, error) {
+func (repo *UserRepository) FindByUsername(username string) (user entity.User, err error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	if err != nil {
-		return false, err
+		return user, err
 	}
 
 	defer session.Close()
 
-	persistedUser, err := session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+	userFromDatabase, err := session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		result, err := transaction.Run(
-			"MATCH (a:User { username: $username }) RETURN a",
+			"MATCH (a:User { username: $username }) RETURN a LIMIT 1",
 			map[string]interface{}{
 				"username": username,
 			},
 		)
 
 		if err != nil {
-			return false, err
+			return entity.User{}, err
 		}
 
 		if result.Next() {
-			return true, nil
+			userProps := result.Record().GetByIndex(0).(neo4j.Node).Props()
+			uuidParsed := uuid.MustParse(userProps["uuid"].(string))
+
+			return entity.User{
+				ID:        uuidParsed,
+				Username:  userProps["username"].(string),
+				Password:  userProps["password"].([]byte),
+				CreatedAt: userProps["created_at"].(time.Time),
+			}, nil
 		}
 
-		return false, result.Err()
+		return entity.User{}, result.Err()
 	})
 
 	if err != nil {
-		return false, err
+		return user, err
 	}
 
-	return persistedUser.(bool), nil
+	return userFromDatabase.(entity.User), nil
 }
 
 // Follow match users and creates a relantionship between them
@@ -206,19 +219,25 @@ func (repo *UserRepository) Unfollow(to, from string) error {
 }
 
 // Create
-func (repo *UserRepository) Create(username string) (entity.User, error) {
+func (repo *UserRepository) Create(username, password string) (entity.User, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return entity.User{}, err
 	}
 	defer session.Close()
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(fmt.Sprintf("%s%s", Salt, password)), 8)
+	if err != nil {
+		return entity.User{}, err
+	}
+
 	persistedUser, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		result, err := transaction.Run(
-			"CREATE (u:User) SET u.uuid = $uuid, u.username = $username, u.created_at = datetime($createdAt) RETURN u.uuid, u.username, u.created_at",
+			"CREATE (u:User) SET u.uuid = $uuid, u.username = $username, u.password = $password, u.created_at = datetime($createdAt) RETURN u.uuid, u.username, u.created_at",
 			map[string]interface{}{
 				"uuid":      uuid.New().String(),
 				"username":  username,
+				"password":  hashedPassword,
 				"createdAt": time.Now().UTC(),
 			},
 		)
