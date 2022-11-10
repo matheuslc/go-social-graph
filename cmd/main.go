@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	_ "gosocialgraph/docs"
 	"gosocialgraph/pkg/handler"
 	"gosocialgraph/server"
 	"os"
