@@ -11,6 +11,34 @@ info:
     describe security to your API.
 
 paths:
+  /api/login:
+    post:
+      summary: Login and get a new token
+      operationId: loginHandler
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    type: string
+
   /api/user:
     post:
       summary: Create a new user
@@ -144,6 +172,8 @@ paths:
     post:
       summary: Create a new post for an user
       operationId: postHandler
+      security:
+        - BearerAuth: ['user:read']
       tags:
         - post
       requestBody:
@@ -186,6 +216,12 @@ paths:
           description: OK
 
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     CreateUserIntent:
       properties:

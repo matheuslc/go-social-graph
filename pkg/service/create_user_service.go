@@ -3,7 +3,6 @@ package service
 //go:generate mockgen -source=./create_user_service.go -destination=../mock/service/create_user_service.go
 
 import (
-	"errors"
 	"gosocialgraph/pkg/entity"
 	"gosocialgraph/pkg/repository"
 )
@@ -15,14 +14,9 @@ type CreateUserService struct {
 
 // Run executes everything together
 func (sv *CreateUserService) Run(username string) (entity.User, error) {
-	persistedUser, err := sv.UserRepository.FindByUsername(username)
-
+	_, err := sv.UserRepository.FindByUsername(username)
 	if err != nil {
 		return entity.User{}, err
-	}
-
-	if persistedUser {
-		return entity.User{}, errors.New("User already exists")
 	}
 
 	newUser, err := sv.UserRepository.Create(username)

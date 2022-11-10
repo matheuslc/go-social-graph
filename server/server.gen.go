@@ -12,8 +12,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+const (
+	BearerAuthScopes = "BearerAuth.Scopes"
+)
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Login and get a new token
+	// (POST /api/login)
+	LoginHandler(ctx echo.Context) error
 	// Create a new post for an user
 	// (POST /api/post)
 	PostHandler(ctx echo.Context) error
@@ -42,9 +49,20 @@ type ServerInterfaceWrapper struct {
 	Handler ServerInterface
 }
 
+// LoginHandler converts echo context to params.
+func (w *ServerInterfaceWrapper) LoginHandler(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.LoginHandler(ctx)
+	return err
+}
+
 // PostHandler converts echo context to params.
 func (w *ServerInterfaceWrapper) PostHandler(ctx echo.Context) error {
 	var err error
+
+	ctx.Set(BearerAuthScopes, []string{"user:read"})
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.PostHandler(ctx)
@@ -184,6 +202,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
+	router.POST(baseURL+"/api/login", wrapper.LoginHandler)
 	router.POST(baseURL+"/api/post", wrapper.PostHandler)
 	router.POST(baseURL+"/api/post/:id/repost", wrapper.RepostHandler)
 	router.GET(baseURL+"/api/profile/:user_id", wrapper.ProfileHandler)

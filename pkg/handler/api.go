@@ -10,6 +10,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func (c AppContext) LoginHandler(echoContext echo.Context) error {
+	username := echoContext.FormValue("username")
+
+	token, err := c.AuthService.Run(username)
+	if err != nil {
+		return err
+	}
+
+	return echoContext.JSON(http.StatusOK, token)
+}
+
 func (c AppContext) RepostHandler(echoContext echo.Context, id uuid.UUID) error {
 	var intent openapi.RepostIntent
 	if err := echoContext.Bind(&intent); err != nil {

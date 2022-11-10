@@ -3,6 +3,7 @@ package repository
 //go:generate mockgen -source=./user_repository.go -destination=../mock/repository/user_repository.go
 
 import (
+	"fmt"
 	"gosocialgraph/pkg/entity"
 	"time"
 
@@ -18,7 +19,7 @@ type UserRepository struct {
 // UserReader defines a unit for finding an user
 type UserReader interface {
 	Find(userID uuid.UUID) (entity.User, error)
-	FindByUsername(username string) (bool, error)
+	FindByUsername(username string) (entity.User, error)
 }
 
 // Follower defines functions a follower must implement
@@ -99,38 +100,47 @@ func (repo *UserRepository) Find(userID uuid.UUID) (entity.User, error) {
 }
 
 // FindByUsername finds a user by its username
-func (repo *UserRepository) FindByUsername(username string) (bool, error) {
+func (repo *UserRepository) FindByUsername(username string) (user entity.User, err error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	if err != nil {
-		return false, err
+		return user, err
 	}
 
 	defer session.Close()
 
-	persistedUser, err := session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+	userFromDatabase, err := session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		result, err := transaction.Run(
-			"MATCH (a:User { username: $username }) RETURN a",
+			"MATCH (a:User { username: $username }) RETURN a LIMIT 1",
 			map[string]interface{}{
 				"username": username,
 			},
 		)
 
 		if err != nil {
-			return false, err
+			return entity.User{}, err
 		}
 
 		if result.Next() {
-			return true, nil
+			userProps := result.Record().GetByIndex(0).(neo4j.Node).Props()
+			uuidParsed := uuid.MustParse(userProps["uuid"].(string))
+
+			return entity.User{
+				ID:        uuidParsed,
+				Username:  userProps["username"].(string),
+				CreatedAt: userProps["created_at"].(time.Time),
+			}, nil
 		}
 
-		return false, result.Err()
+		return entity.User{}, result.Err()
 	})
 
 	if err != nil {
-		return false, err
+		return user, err
 	}
 
-	return persistedUser.(bool), nil
+	fmt.Println(userFromDatabase)
+
+	return userFromDatabase.(entity.User), nil
 }
 
 // Follow match users and creates a relantionship between them

@@ -51,10 +51,10 @@ func (mr *MockUserReaderMockRecorder) Find(userID interface{}) *gomock.Call {
 }
 
 // FindByUsername mocks base method.
-func (m *MockUserReader) FindByUsername(username string) (bool, error) {
+func (m *MockUserReader) FindByUsername(username string) (entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByUsername", username)
-	ret0, _ := ret[0].(bool)
+	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -297,10 +297,10 @@ func (mr *MockUserReaderWriterMockRecorder) Find(userID interface{}) *gomock.Cal
 }
 
 // FindByUsername mocks base method.
-func (m *MockUserReaderWriter) FindByUsername(username string) (bool, error) {
+func (m *MockUserReaderWriter) FindByUsername(username string) (entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByUsername", username)
-	ret0, _ := ret[0].(bool)
+	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
