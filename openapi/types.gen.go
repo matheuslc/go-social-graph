@@ -10,7 +10,6 @@ import (
 )
 
 const (
-	BasicScopes      = "basic.Scopes"
 	BearerAuthScopes = "bearerAuth.Scopes"
 )
 

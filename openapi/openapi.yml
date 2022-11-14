@@ -7,9 +7,6 @@ info:
   version: "1.0.0"
   title: Go Social Graph API
 
-security:
-  - basic: []
-
 paths:
   /api/login:
     post:
@@ -227,9 +224,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-    basic:
-      type: http
-      scheme: basic
 
   schemas:
     CreateUserIntent:

@@ -48,22 +48,33 @@ func (repo *PostRepository) Create(userID, content string) (entity.Post, error) 
 		}
 
 		if result.Next() {
-			result, err := transaction.Run(
-				"MATCH (a:User), (b:Post) WHERE a.uuid = $userId AND b.uuid = $postId CREATE(a)-[r:TWEET]->(b) CREATE(b)-[own:OWNS]->(a)",
-				map[string]interface{}{
-					"userId": userID,
-					"postId": uuid.MustParse(result.Record().GetByIndex(0).(string)),
-				},
-			)
-
-			if err != nil {
-				return nil, err
-			}
-
 			return entity.Post{
 				ID:      uuid.MustParse(result.Record().GetByIndex(0).(string)),
 				Content: result.Record().GetByIndex(1).(string),
 			}, nil
+		}
+
+		return nil, result.Err()
+	})
+
+	if err != nil {
+		return entity.Post{}, err
+	}
+
+	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(
+			"MATCH (a:User), (b:Post) WHERE a.uuid = $userId AND b.uuid = $postId CREATE(a)-[r:TWEET]->(b) CREATE(b)-[own:OWNS]->(a)",
+			map[string]interface{}{
+				"userId": userID,
+				"postId": persistedPost.(entity.Post).ID.String(),
+			})
+
+		if err != nil {
+			return nil, err
+		}
+
+		if result.Next() {
+			return result.Record(), nil
 		}
 
 		return nil, result.Err()

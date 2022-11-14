@@ -54,8 +54,6 @@ type ServerInterfaceWrapper struct {
 func (w *ServerInterfaceWrapper) LoginHandler(ctx echo.Context) error {
 	var err error
 
-	ctx.Set(BasicScopes, []string{""})
-
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.LoginHandler(ctx)
 	return err
@@ -83,8 +81,6 @@ func (w *ServerInterfaceWrapper) RepostHandler(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
 	}
 
-	ctx.Set(BasicScopes, []string{""})
-
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.RepostHandler(ctx, id)
 	return err
@@ -100,8 +96,6 @@ func (w *ServerInterfaceWrapper) ProfileHandler(ctx echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
 	}
-
-	ctx.Set(BasicScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.ProfileHandler(ctx, userId)
@@ -136,8 +130,6 @@ func (w *ServerInterfaceWrapper) FollowHandler(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter from: %s", err))
 	}
 
-	ctx.Set(BasicScopes, []string{""})
-
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.FollowHandler(ctx, id, from)
 	return err
@@ -153,8 +145,6 @@ func (w *ServerInterfaceWrapper) TimelineHandler(ctx echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
 	}
-
-	ctx.Set(BasicScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.TimelineHandler(ctx, id)
@@ -179,8 +169,6 @@ func (w *ServerInterfaceWrapper) UnfollowHandler(ctx echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter from: %s", err))
 	}
-
-	ctx.Set(BasicScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.UnfollowHandler(ctx, id, from)

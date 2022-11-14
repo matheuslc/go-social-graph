@@ -35,15 +35,15 @@ func (sv AuthService) Run(username string, password string) (string, string, err
 	claims := &JwtCustomClaims{
 		user.ID.String(),
 		user.Username,
-		"admin",
+		"user",
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Microsecond + 1).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte("secret"))
+	t, err := token.SignedString([]byte(JwtScret))
 	if err != nil {
 		return "", "", err
 	}
@@ -53,7 +53,7 @@ func (sv AuthService) Run(username string, password string) (string, string, err
 	}
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
-	rt, err := refreshToken.SignedString([]byte("secret"))
+	rt, err := refreshToken.SignedString([]byte(JwtScret))
 	if err != nil {
 		return "", "", err
 	}
