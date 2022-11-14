@@ -10,14 +10,12 @@ import (
 )
 
 const (
-	BasicScopes      = "basic.Scopes"
 	BearerAuthScopes = "bearerAuth.Scopes"
 )
 
 // CreatePostRequest defines model for CreatePostRequest.
 type CreatePostRequest struct {
-	Content string             `json:"content"`
-	UserId  openapi_types.UUID `json:"user_id"`
+	Content string `json:"content"`
 }
 
 // CreatePostResponse defines model for CreatePostResponse.

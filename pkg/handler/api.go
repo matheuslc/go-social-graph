@@ -41,7 +41,8 @@ func (c AppContext) PostHandler(echoContext echo.Context) error {
 		return err
 	}
 
-	post, err := c.PostService.Run(intent.UserId, intent.Content)
+	userID := uuid.MustParse(echoContext.Get("userID").(string))
+	post, err := c.PostService.Run(userID, intent.Content)
 	if err != nil {
 		return err
 	}

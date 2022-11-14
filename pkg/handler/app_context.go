@@ -65,25 +65,17 @@ func NewAppContext() AppContext {
 		},
 	}))
 
+	e.Use(auth.UserIDAtContext)
+
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"social-graph.localdev.me", "localhost:3010"},
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
-	config := middleware.JWTConfig{
-		Claims:     &auth.JwtCustomClaims{},
-		SigningKey: []byte("secret"),
-	}
-
-	e.Use(middleware.JWTWithConfig(config))
-
 	userRepository := repository.UserRepository{Client: db}
 	postRepository := repository.PostRepository{Client: db}
 	timelineRepository := repository.TimelineRepository{Client: db}
-
-	// token, err := auth.AuthService{Repository: &userRepository}.Run("dormire", "aq1dsadsad123123wdasdsadsfsafsafsafsafsaf123123123sdsafasfasfsaf")
-	// fmt.Println(token)
 
 	return AppContext{
 		Db:             &db,

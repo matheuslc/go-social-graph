@@ -13,7 +13,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var Salt = os.Getenv("SALT")
+var Salt = os.Getenv("JWT_SALT")
 
 // UserRepository defines the Graph implementation of UserRepository
 type UserRepository struct {
