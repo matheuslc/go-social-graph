@@ -14,7 +14,6 @@ import (
 
 const (
 	BearerAuthScopes = "BearerAuth.Scopes"
-	BasicScopes 	= "Basic.Scopes"
 )
 
 // ServerInterface represents all server handlers.

@@ -65,6 +65,8 @@ func NewAppContext() AppContext {
 		},
 	}))
 
+	e.Use(auth.UserIDAtContext)
+
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"social-graph.localdev.me", "localhost:3010"},
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},

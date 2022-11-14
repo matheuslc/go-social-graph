@@ -23,7 +23,11 @@ var (
 
 func NewAuthenticator() openapi3filter.AuthenticationFunc {
 	return func(ctx context.Context, input *openapi3filter.AuthenticationInput) error {
-		return Authenticate(ctx, input)
+		if err := Authenticate(ctx, input); err != nil {
+			return err
+		}
+
+		return nil
 	}
 }
 
@@ -37,18 +41,25 @@ func Authenticate(ctx context.Context, input *openapi3filter.AuthenticationInput
 		return fmt.Errorf("getting jws: %w", err)
 	}
 
+	_, err = ParseJWT(jws)
+	if err != nil {
+		return fmt.Errorf("parsing jwt: %w", err)
+	}
+
+	return nil
+}
+
+func ParseJWT(token string) (*jwt.Token, error) {
 	fn := jwt.Keyfunc(func(token *jwt.Token) (interface{}, error) {
 		return []byte(JwtScret), nil
 	})
 
-	parsed, err := jwt.Parse(jws, fn)
+	parsed, err := jwt.Parse(token, fn)
 	if err != nil || !parsed.Valid {
-		return err
+		return nil, err
 	}
 
-	fmt.Println("JWT validated")
-
-	return nil
+	return parsed, nil
 }
 
 func GetJWSFromRequest(req *http.Request) (string, error) {
