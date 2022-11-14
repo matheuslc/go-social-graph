@@ -6,9 +6,9 @@ servers:
 info:
   version: "1.0.0"
   title: Go Social Graph API
-  description: >-
-    This is an example of using OAuth2 Access Code Flow in a specification to
-    describe security to your API.
+
+security:
+  - basic: []
 
 paths:
   /api/login:
@@ -43,6 +43,7 @@ paths:
       operationId: createUser
       tags:
         - user
+      security: []
       requestBody:
         required: true
         content:
@@ -177,7 +178,8 @@ paths:
       summary: Create a new post for an user
       operationId: postHandler
       security:
-        - BearerAuth: ['user:read']
+        - bearerAuth:
+          - 'write'
       tags:
         - post
       requestBody:
@@ -221,10 +223,13 @@ paths:
 
 components:
   securitySchemes:
-    BearerAuth:
+    bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+    basic:
+      type: http
+      scheme: basic
 
   schemas:
     CreateUserIntent:

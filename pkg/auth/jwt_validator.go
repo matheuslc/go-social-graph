@@ -2,20 +2,15 @@ package auth
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"net/http"
-	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3filter"
-	"github.com/golang-jwt/jwt"
 )
 
-var (
-	ErrNoAuthHeader      = errors.New("Authorization header is missing")
-	ErrInvalidAuthHeader = errors.New("Authorization header is malformed")
-	ErrClaimsInvalid     = errors.New("Provided claims do not match expected scopes")
-)
+// var (
+// 	ErrNoAuthHeader      = errors.New("Authorization header is missing")
+// 	ErrInvalidAuthHeader = errors.New("Authorization header is malformed")
+// 	ErrClaimsInvalid     = errors.New("Provided claims do not match expected scopes")
+// )
 
 func NewAuthenticator() openapi3filter.AuthenticationFunc {
 	return func(ctx context.Context, input *openapi3filter.AuthenticationInput) error {
@@ -25,39 +20,42 @@ func NewAuthenticator() openapi3filter.AuthenticationFunc {
 
 func Authenticate(ctx context.Context, input *openapi3filter.AuthenticationInput) error {
 	// Later we can check more things if wanted
-	if input.SecuritySchemeName != "BearerAuth" {
-		return fmt.Errorf("security scheme %s != 'BearerAuth'", input.SecuritySchemeName)
-	}
+	// fmt.Println("context", ctx)
+	// fmt.Println("Authenticating request")
 
-	jws, err := GetJWSFromRequest(input.RequestValidationInput.Request)
-	if err != nil {
-		return fmt.Errorf("getting jws: %w", err)
-	}
+	// if input.SecuritySchemeName != "BearerAuth" {
+	// 	return fmt.Errorf("security scheme %s != 'BearerAuth'", input.SecuritySchemeName)
+	// }
 
-	fn := jwt.Keyfunc(func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
-	})
+	// jws, err := GetJWSFromRequest(input.RequestValidationInput.Request)
+	// if err != nil {
+	// 	return fmt.Errorf("getting jws: %w", err)
+	// }
 
-	parsed, err := jwt.Parse(jws, fn)
-	if err != nil || !parsed.Valid {
-		return err
-	}
+	// fn := jwt.Keyfunc(func(token *jwt.Token) (interface{}, error) {
+	// 	return []byte("secret"), nil
+	// })
+
+	// parsed, err := jwt.Parse(jws, fn)
+	// if err != nil || !parsed.Valid {
+	// 	return err
+	// }
 
 	return nil
 }
 
 // GetJWSFromRequest extracts a JWS string from an Authorization: Bearer <jws> header
-func GetJWSFromRequest(req *http.Request) (string, error) {
-	authHdr := req.Header.Get("Authorization")
-	// Check for the Authorization header.
-	if authHdr == "" {
-		return "", ErrNoAuthHeader
-	}
-	// We expect a header value of the form "Bearer <token>", with 1 space after
-	// Bearer, per spec.
-	prefix := "Bearer "
-	if !strings.HasPrefix(authHdr, prefix) {
-		return "", ErrInvalidAuthHeader
-	}
-	return strings.TrimPrefix(authHdr, prefix), nil
-}
+// func GetJWSFromRequest(req *http.Request) (string, error) {
+// 	authHdr := req.Header.Get("Authorization")
+// 	// Check for the Authorization header.
+// 	if authHdr == "" {
+// 		return "", ErrNoAuthHeader
+// 	}
+// 	// We expect a header value of the form "Bearer <token>", with 1 space after
+// 	// Bearer, per spec.
+// 	prefix := "Bearer "
+// 	if !strings.HasPrefix(authHdr, prefix) {
+// 		return "", ErrInvalidAuthHeader
+// 	}
+// 	return strings.TrimPrefix(authHdr, prefix), nil
+// }
