@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	BearerAuthScopes = "BearerAuth.Scopes"
+	BasicScopes      = "basic.Scopes"
+	BearerAuthScopes = "bearerAuth.Scopes"
 )
 
 // CreatePostRequest defines model for CreatePostRequest.
