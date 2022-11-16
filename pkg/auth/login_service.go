@@ -15,6 +15,7 @@ type JwtCustomClaims struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 	Role string `json:"role"`
+
 	jwt.StandardClaims
 }
 
@@ -37,6 +38,8 @@ func (sv AuthService) Run(username string, password string) (string, string, err
 		user.Username,
 		"user",
 		jwt.StandardClaims{
+			Subject:   user.ID.String(),
+			Issuer:    "api",
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		},
 	}

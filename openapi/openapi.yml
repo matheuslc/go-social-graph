@@ -64,19 +64,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreateUserResponse"
 
-  /api/user/{id}/timeline:
+  /api/user/timeline:
     get:
       summary: Retrieve the timeline for a user
       operationId: timelineHandler
+      security:
+        - bearerAuth:
+          - 'read'
       tags:
         - user
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-            format: uuid
       responses:
         200:
           description: OK
@@ -85,66 +81,42 @@ paths:
               schema:
                 $ref: "#/components/schemas/TimelineResponse"
 
-  /api/user/{id}/follow/{from}:
+  /api/user/follow/{from}:
     post:
       summary: Follows a user
       operationId: followHandler
+      security:
+        - bearerAuth:
+          - 'write'
       tags:
         - user
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-            format: uuid
         - in: path
           name: from
           required: true
           schema:
             type: string
             format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                from:
-                  type: string
-                  format: uuid
       responses:
         200:
           description: OK
 
-  /api/user/{id}/unfollow/{from}:
+  /api/user/unfollow/{from}:
     post:
       summary: Unfollow a user
       operationId: unfollowHandler
+      security:
+        - bearerAuth:
+          - 'write'
       tags:
         - user
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-            format: uuid
         - in: path
           name: from
           required: true
           schema:
             type: string
             format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                from:
-                  type: string
-                  format: uuid
       responses:
         200:
           description: OK
@@ -198,6 +170,9 @@ paths:
     post:
       summary: Repost an user post
       operationId: repostHandler
+      security:
+        - bearerAuth:
+          - 'write'
       tags:
         - post
       parameters:
