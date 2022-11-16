@@ -36,12 +36,14 @@ func (c AppContext) RepostHandler(echoContext echo.Context, id uuid.UUID) error 
 
 func (c AppContext) PostHandler(echoContext echo.Context) error {
 	var intent openapi.CreatePostRequest
+
 	err := echoContext.Bind(&intent)
 	if err != nil {
 		return err
 	}
 
 	userID := uuid.MustParse(echoContext.Get("userID").(string))
+
 	post, err := c.PostService.Run(userID, intent.Content)
 	if err != nil {
 		return err
@@ -52,8 +54,10 @@ func (c AppContext) PostHandler(echoContext echo.Context) error {
 	return echoContext.JSON(http.StatusCreated, restPost)
 }
 
-func (c AppContext) TimelineHandler(echoContext echo.Context, id uuid.UUID) error {
-	response, err := c.TimelineServive.Run(id)
+func (c AppContext) TimelineHandler(echoContext echo.Context) error {
+	userID := uuid.MustParse(echoContext.Get("userID").(string))
+
+	response, err := c.TimelineServive.Run(userID)
 	if err != nil {
 		return err
 	}
@@ -76,16 +80,18 @@ func (c AppContext) TimelineHandler(echoContext echo.Context, id uuid.UUID) erro
 // 	}
 // }
 
-func (c AppContext) FollowHandler(echoContext echo.Context, id uuid.UUID, from uuid.UUID) error {
-	if err := c.FollowService.Run(id, from); err != nil {
+func (c AppContext) FollowHandler(echoContext echo.Context, from uuid.UUID) error {
+	userID := uuid.MustParse(echoContext.Get("userID").(string))
+	if err := c.FollowService.Run(userID, from); err != nil {
 		return err
 	}
 
 	return echoContext.NoContent(http.StatusOK)
 }
 
-func (c AppContext) UnfollowHandler(echoContext echo.Context, id uuid.UUID, from uuid.UUID) error {
-	if err := c.UnfollowService.Run(id, from); err != nil {
+func (c AppContext) UnfollowHandler(echoContext echo.Context, from uuid.UUID) error {
+	userID := uuid.MustParse(echoContext.Get("userID").(string))
+	if err := c.UnfollowService.Run(userID, from); err != nil {
 		return err
 	}
 

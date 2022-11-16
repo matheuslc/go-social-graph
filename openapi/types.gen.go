@@ -96,16 +96,6 @@ type CreateUserMultipartBody struct {
 	Username string `json:"username"`
 }
 
-// FollowHandlerJSONBody defines parameters for FollowHandler.
-type FollowHandlerJSONBody struct {
-	From *openapi_types.UUID `json:"from,omitempty"`
-}
-
-// UnfollowHandlerJSONBody defines parameters for UnfollowHandler.
-type UnfollowHandlerJSONBody struct {
-	From *openapi_types.UUID `json:"from,omitempty"`
-}
-
 // LoginHandlerMultipartRequestBody defines body for LoginHandler for multipart/form-data ContentType.
 type LoginHandlerMultipartRequestBody LoginHandlerMultipartBody
 
@@ -117,9 +107,3 @@ type RepostHandlerJSONRequestBody = RepostIntent
 
 // CreateUserMultipartRequestBody defines body for CreateUser for multipart/form-data ContentType.
 type CreateUserMultipartRequestBody CreateUserMultipartBody
-
-// FollowHandlerJSONRequestBody defines body for FollowHandler for application/json ContentType.
-type FollowHandlerJSONRequestBody FollowHandlerJSONBody
-
-// UnfollowHandlerJSONRequestBody defines body for UnfollowHandler for application/json ContentType.
-type UnfollowHandlerJSONRequestBody UnfollowHandlerJSONBody

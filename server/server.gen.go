@@ -34,14 +34,14 @@ type ServerInterface interface {
 	// (POST /api/user)
 	CreateUser(ctx echo.Context) error
 	// Follows a user
-	// (POST /api/user/{id}/follow/{from})
-	FollowHandler(ctx echo.Context, id openapi_types.UUID, from openapi_types.UUID) error
+	// (POST /api/user/follow/{from})
+	FollowHandler(ctx echo.Context, from openapi_types.UUID) error
 	// Retrieve the timeline for a user
-	// (GET /api/user/{id}/timeline)
-	TimelineHandler(ctx echo.Context, id openapi_types.UUID) error
+	// (GET /api/user/timeline)
+	TimelineHandler(ctx echo.Context) error
 	// Unfollow a user
-	// (POST /api/user/{id}/unfollow/{from})
-	UnfollowHandler(ctx echo.Context, id openapi_types.UUID, from openapi_types.UUID) error
+	// (POST /api/user/unfollow/{from})
+	UnfollowHandler(ctx echo.Context, from openapi_types.UUID) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -80,6 +80,8 @@ func (w *ServerInterfaceWrapper) RepostHandler(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
 	}
 
+	ctx.Set(BearerAuthScopes, []string{"write"})
+
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.RepostHandler(ctx, id)
 	return err
@@ -113,14 +115,6 @@ func (w *ServerInterfaceWrapper) CreateUser(ctx echo.Context) error {
 // FollowHandler converts echo context to params.
 func (w *ServerInterfaceWrapper) FollowHandler(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "id" -------------
-	var id openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
-	}
-
 	// ------------- Path parameter "from" -------------
 	var from openapi_types.UUID
 
@@ -129,38 +123,27 @@ func (w *ServerInterfaceWrapper) FollowHandler(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter from: %s", err))
 	}
 
+	ctx.Set(BearerAuthScopes, []string{"write"})
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.FollowHandler(ctx, id, from)
+	err = w.Handler.FollowHandler(ctx, from)
 	return err
 }
 
 // TimelineHandler converts echo context to params.
 func (w *ServerInterfaceWrapper) TimelineHandler(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "id" -------------
-	var id openapi_types.UUID
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
-	}
+	ctx.Set(BearerAuthScopes, []string{"read"})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.TimelineHandler(ctx, id)
+	err = w.Handler.TimelineHandler(ctx)
 	return err
 }
 
 // UnfollowHandler converts echo context to params.
 func (w *ServerInterfaceWrapper) UnfollowHandler(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "id" -------------
-	var id openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
-	}
-
 	// ------------- Path parameter "from" -------------
 	var from openapi_types.UUID
 
@@ -169,8 +152,10 @@ func (w *ServerInterfaceWrapper) UnfollowHandler(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter from: %s", err))
 	}
 
+	ctx.Set(BearerAuthScopes, []string{"write"})
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.UnfollowHandler(ctx, id, from)
+	err = w.Handler.UnfollowHandler(ctx, from)
 	return err
 }
 
@@ -207,8 +192,8 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/api/post/:id/repost", wrapper.RepostHandler)
 	router.GET(baseURL+"/api/profile/:user_id", wrapper.ProfileHandler)
 	router.POST(baseURL+"/api/user", wrapper.CreateUser)
-	router.POST(baseURL+"/api/user/:id/follow/:from", wrapper.FollowHandler)
-	router.GET(baseURL+"/api/user/:id/timeline", wrapper.TimelineHandler)
-	router.POST(baseURL+"/api/user/:id/unfollow/:from", wrapper.UnfollowHandler)
+	router.POST(baseURL+"/api/user/follow/:from", wrapper.FollowHandler)
+	router.GET(baseURL+"/api/user/timeline", wrapper.TimelineHandler)
+	router.POST(baseURL+"/api/user/unfollow/:from", wrapper.UnfollowHandler)
 
 }
