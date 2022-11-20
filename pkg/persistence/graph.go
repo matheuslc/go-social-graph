@@ -9,7 +9,7 @@ import (
 // New database
 func New(uri, username, password string) (neo4j.Driver, error) {
 	driver, err := neo4j.NewDriver(uri, neo4j.BasicAuth(username, password, ""), func(c *neo4j.Config) {
-		c.Encrypted = false
+		c.Encrypted = true
 	})
 
 	if err != nil {

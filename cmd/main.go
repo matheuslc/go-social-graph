@@ -14,6 +14,7 @@ var APIVersion = "nonset"
 var Environment = "nonset"
 
 func main() {
+	fmt.Println("??")
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 
 	defer cancel()
