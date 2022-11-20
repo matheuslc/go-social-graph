@@ -1,6 +1,7 @@
-package api
+package pages
 
 import (
+	"fmt"
 	"gosocialgraph/pkg/handler"
 	"gosocialgraph/server"
 	"net/http"
@@ -16,6 +17,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// appContext := handler.NewAppContext()
 	server.RegisterHandlers(globalAppcontext.Router, globalAppcontext)
 	server.RegisterHandlers(globalAppcontext.Router, globalAppcontext)
+
+	fmt.Println("daeee")
 
 	globalAppcontext.Router.ServeHTTP(w, r)
 }
