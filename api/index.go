@@ -6,9 +6,14 @@ import (
 	"net/http"
 )
 
-func Handler(w http.ResponseWriter, r *http.Request) {
-	appContext := handler.NewAppContext()
-	server.RegisterHandlers(appContext.Router, appContext)
+var globalContext handler.AppContext
 
-	appContext.Router.ServeHTTP(w, r)
+func init() {
+	globalContext = handler.NewAppContext()
+}
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+	server.RegisterHandlers(globalContext.Router, globalContext)
+
+	globalContext.Router.ServeHTTP(w, r)
 }
