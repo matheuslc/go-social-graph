@@ -16,19 +16,17 @@ type CreateUserService struct {
 }
 
 // Run executes everything together
-func (sv *CreateUserService) Run(username, password string) (entity.User, error) {
+func (sv *CreateUserService) Run(username, email, password string) (entity.User, error) {
 	found, err := sv.UserRepository.FindByUsername(username)
 	if err != nil {
 		return entity.User{}, err
 	}
 
-	fmt.Println("found", found)
-
 	if found.ID != uuid.Nil {
 		return entity.User{}, fmt.Errorf("User already exist")
 	}
 
-	newUser, err := sv.UserRepository.Create(username, password)
+	newUser, err := sv.UserRepository.Create(username, email, password)
 	if err != nil {
 		return entity.User{}, err
 	}

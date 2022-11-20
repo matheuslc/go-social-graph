@@ -128,9 +128,10 @@ func (c AppContext) ProfileHandler(echoContext echo.Context, userID uuid.UUID) e
 
 func (c AppContext) CreateUser(echoContext echo.Context) error {
 	username := echoContext.FormValue("username")
+	email := echoContext.FormValue("email")
 	password := echoContext.FormValue("password")
 
-	persistedUser, err := c.CreateUserService.Run(username, password)
+	persistedUser, err := c.CreateUserService.Run(username, email, password)
 	if err != nil {
 		return err
 	}
@@ -139,6 +140,7 @@ func (c AppContext) CreateUser(echoContext echo.Context) error {
 		Id:        persistedUser.ID,
 		CreatedAt: persistedUser.CreatedAt,
 		Username:  persistedUser.Username,
+		Email:     persistedUser.Email,
 	}
 
 	return echoContext.JSON(http.StatusCreated, restResponse)

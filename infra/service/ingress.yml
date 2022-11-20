@@ -5,6 +5,7 @@ metadata:
   namespace: internal
   annotations:
     nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
     nginx.ingress.kubernetes.io/cors-allow-headers: Content-Type
     nginx.ingress.kubernetes.io/cors-allow-methods: POST, GET, OPTIONS
     nginx.ingress.kubernetes.io/cors-max-age: "86400"

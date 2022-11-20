@@ -5,15 +5,12 @@ package server
 
 import (
 	"fmt"
+	"gosocialgraph/openapi"
 	"net/http"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 	"github.com/labstack/echo/v4"
-)
-
-const (
-	BearerAuthScopes = "BearerAuth.Scopes"
 )
 
 // ServerInterface represents all server handlers.
@@ -62,7 +59,7 @@ func (w *ServerInterfaceWrapper) LoginHandler(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) PostHandler(ctx echo.Context) error {
 	var err error
 
-	ctx.Set(BearerAuthScopes, []string{"write"})
+	ctx.Set(openapi.BearerAuthScopes, []string{"write"})
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.PostHandler(ctx)
@@ -80,7 +77,7 @@ func (w *ServerInterfaceWrapper) RepostHandler(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
 	}
 
-	ctx.Set(BearerAuthScopes, []string{"write"})
+	ctx.Set(openapi.BearerAuthScopes, []string{"write"})
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.RepostHandler(ctx, id)
@@ -123,7 +120,7 @@ func (w *ServerInterfaceWrapper) FollowHandler(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter from: %s", err))
 	}
 
-	ctx.Set(BearerAuthScopes, []string{"write"})
+	ctx.Set(openapi.BearerAuthScopes, []string{"write"})
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.FollowHandler(ctx, from)
@@ -134,7 +131,7 @@ func (w *ServerInterfaceWrapper) FollowHandler(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) TimelineHandler(ctx echo.Context) error {
 	var err error
 
-	ctx.Set(BearerAuthScopes, []string{"read"})
+	ctx.Set(openapi.BearerAuthScopes, []string{"read"})
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.TimelineHandler(ctx)
@@ -152,7 +149,7 @@ func (w *ServerInterfaceWrapper) UnfollowHandler(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter from: %s", err))
 	}
 
-	ctx.Set(BearerAuthScopes, []string{"write"})
+	ctx.Set(openapi.BearerAuthScopes, []string{"write"})
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.UnfollowHandler(ctx, from)

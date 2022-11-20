@@ -52,6 +52,8 @@ func (sv AuthService) Run(username string, password string) (string, string, err
 	}
 
 	refreshClaims := &jwt.StandardClaims{
+		Subject:   user.ID.String(),
+		Issuer:    "api",
 		ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 	}
 

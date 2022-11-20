@@ -59,6 +59,13 @@ func NewAppContext() AppContext {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		// AllowOrigins: []string{"*", "social-graph.localdev.me", "localhost:3010", "http://localhost:5173"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
+
 	e.Use(md.OapiRequestValidatorWithOptions(swagger, &md.Options{
 		Options: openapi3filter.Options{
 			AuthenticationFunc: auth.NewAuthenticator(),
@@ -66,12 +73,6 @@ func NewAppContext() AppContext {
 	}))
 
 	e.Use(auth.UserIDAtContext)
-
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"social-graph.localdev.me", "localhost:3010"},
-		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-	}))
 
 	userRepository := repository.UserRepository{Client: db}
 	postRepository := repository.PostRepository{Client: db}
