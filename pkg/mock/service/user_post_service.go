@@ -5,6 +5,7 @@
 package mock_service
 
 import (
+	context "context"
 	entity "gosocialgraph/pkg/entity"
 	reflect "reflect"
 
@@ -36,16 +37,16 @@ func (m *MockUserPostRunner) EXPECT() *MockUserPostRunnerMockRecorder {
 }
 
 // Run mocks base method.
-func (m *MockUserPostRunner) Run(userID uuid.UUID) ([]entity.UserPost, error) {
+func (m *MockUserPostRunner) Run(ctx context.Context, userID uuid.UUID) ([]entity.UserPost, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Run", userID)
+	ret := m.ctrl.Call(m, "Run", ctx, userID)
 	ret0, _ := ret[0].([]entity.UserPost)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockUserPostRunnerMockRecorder) Run(userID interface{}) *gomock.Call {
+func (mr *MockUserPostRunnerMockRecorder) Run(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockUserPostRunner)(nil).Run), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockUserPostRunner)(nil).Run), ctx, userID)
 }

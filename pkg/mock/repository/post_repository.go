@@ -5,6 +5,7 @@
 package mock_repository
 
 import (
+	context "context"
 	entity "gosocialgraph/pkg/entity"
 	reflect "reflect"
 
@@ -35,18 +36,18 @@ func (m *MockPostWriter) EXPECT() *MockPostWriterMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockPostWriter) Create(userID, content string) (entity.Post, error) {
+func (m *MockPostWriter) Create(ctx context.Context, userID, content string) (entity.Post, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", userID, content)
+	ret := m.ctrl.Call(m, "Create", ctx, userID, content)
 	ret0, _ := ret[0].(entity.Post)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockPostWriterMockRecorder) Create(userID, content interface{}) *gomock.Call {
+func (mr *MockPostWriterMockRecorder) Create(ctx, userID, content interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockPostWriter)(nil).Create), userID, content)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockPostWriter)(nil).Create), ctx, userID, content)
 }
 
 // MockReposter is a mock of Reposter interface.
@@ -73,15 +74,15 @@ func (m *MockReposter) EXPECT() *MockReposterMockRecorder {
 }
 
 // Repost mocks base method.
-func (m *MockReposter) Repost(user, parentID, quote string) error {
+func (m *MockReposter) Repost(ctx context.Context, user, parentID, quote string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Repost", user, parentID, quote)
+	ret := m.ctrl.Call(m, "Repost", ctx, user, parentID, quote)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Repost indicates an expected call of Repost.
-func (mr *MockReposterMockRecorder) Repost(user, parentID, quote interface{}) *gomock.Call {
+func (mr *MockReposterMockRecorder) Repost(ctx, user, parentID, quote interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Repost", reflect.TypeOf((*MockReposter)(nil).Repost), user, parentID, quote)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Repost", reflect.TypeOf((*MockReposter)(nil).Repost), ctx, user, parentID, quote)
 }

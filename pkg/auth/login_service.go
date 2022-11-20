@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"fmt"
 	"gosocialgraph/pkg/repository"
 	"time"
@@ -27,8 +28,8 @@ type AuthService struct {
 	Repository repository.UserReader
 }
 
-func (sv AuthService) Run(username string, password string) (string, string, error) {
-	user, err := sv.Repository.FindByUsername(username)
+func (sv AuthService) Run(ctx context.Context, username string, password string) (string, string, error) {
+	user, err := sv.Repository.FindByUsername(ctx, username)
 	if err != nil {
 		return "", "", nil
 	}

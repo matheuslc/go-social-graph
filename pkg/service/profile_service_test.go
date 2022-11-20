@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"context"
 	"gosocialgraph/pkg/entity"
 	u "gosocialgraph/pkg/entity"
 	mock_service "gosocialgraph/pkg/mock/service"
@@ -22,15 +23,16 @@ func TestProfileRun(t *testing.T) {
 	user := u.User{ID: userID}
 	userFound := service.FindUserResponse{User: user}
 
+	ctx := context.Background()
 	findUserService := mock_service.NewMockFindUserRunner(controller)
-	findUserService.EXPECT().Run(userID).Return(userFound, nil)
+	findUserService.EXPECT().Run(ctx, userID).Return(userFound, nil)
 
 	// Mocking stats service
 	statsResponse := service.StatsResponse{
 		ProfileStats: service.ProfileStats{Followers: 10, Following: 5, PostsCount: 10},
 	}
 	statsService := mock_service.NewMockStatsRunner(controller)
-	statsService.EXPECT().Run(userID).Return(statsResponse, nil)
+	statsService.EXPECT().Run(ctx, userID).Return(statsResponse, nil)
 
 	// Mocking user post stats service
 	firstPost := entity.Post{ID: uuid.New(), Content: "first fake post", CreatedAt: time.Now()}
@@ -40,7 +42,7 @@ func TestProfileRun(t *testing.T) {
 	posts = append(posts, entity.UserPost{User: user, Post: firstPost}, entity.UserPost{User: user, Post: secondPost})
 
 	userPostService := mock_service.NewMockUserPostRunner(controller)
-	userPostService.EXPECT().Run(userID).Return(posts, nil)
+	userPostService.EXPECT().Run(ctx, userID).Return(posts, nil)
 
 	sv := service.ProfileService{
 		FindUserService: findUserService,
@@ -48,7 +50,7 @@ func TestProfileRun(t *testing.T) {
 		UserPostService: userPostService,
 	}
 
-	result, err := sv.Run(userID)
+	result, err := sv.Run(ctx, userID)
 	if err != nil {
 		t.Errorf("Could not get user profile properly")
 	}

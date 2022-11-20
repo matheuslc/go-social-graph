@@ -5,6 +5,7 @@
 package mock_service
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,15 +36,15 @@ func (m *MockUnfolowRunner) EXPECT() *MockUnfolowRunnerMockRecorder {
 }
 
 // Run mocks base method.
-func (m *MockUnfolowRunner) Run(to, from uuid.UUID) error {
+func (m *MockUnfolowRunner) Run(ctx context.Context, to, from uuid.UUID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Run", to, from)
+	ret := m.ctrl.Call(m, "Run", ctx, to, from)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockUnfolowRunnerMockRecorder) Run(to, from interface{}) *gomock.Call {
+func (mr *MockUnfolowRunnerMockRecorder) Run(ctx, to, from interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockUnfolowRunner)(nil).Run), to, from)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockUnfolowRunner)(nil).Run), ctx, to, from)
 }

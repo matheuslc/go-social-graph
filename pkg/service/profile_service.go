@@ -3,6 +3,7 @@ package service
 //go:generate mockgen -source=./profile_service.go -destination=../mock/service/profile_service.go
 
 import (
+	"context"
 	"gosocialgraph/pkg/entity"
 
 	"github.com/google/uuid"
@@ -24,10 +25,10 @@ type ProfileService struct {
 }
 
 // Run executes the use case. It will first find the user, than collec stats to show in his profile
-func (sv ProfileService) Run(userID uuid.UUID) (ProfileResponse, error) {
-	userFound, err := sv.FindUserService.Run(userID)
-	stats, err := sv.StatsService.Run(userID)
-	posts, err := sv.UserPostService.Run(userID)
+func (sv ProfileService) Run(ctx context.Context, userID uuid.UUID) (ProfileResponse, error) {
+	userFound, err := sv.FindUserService.Run(ctx, userID)
+	stats, err := sv.StatsService.Run(ctx, userID)
+	posts, err := sv.UserPostService.Run(ctx, userID)
 
 	if err != nil {
 		return ProfileResponse{}, err

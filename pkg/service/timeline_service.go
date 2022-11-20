@@ -3,6 +3,7 @@ package service
 //go:generate mockgen -source=./timeline_service.go -destination=../mock/service/timeline_service.go
 
 import (
+	"context"
 	"gosocialgraph/pkg/entity"
 	"gosocialgraph/pkg/repository"
 
@@ -15,8 +16,8 @@ type TimelineServive struct {
 }
 
 // Run executes the use case
-func (sv TimelineServive) Run(userID uuid.UUID) (response []entity.UserPost, err error) {
-	response, err = sv.Repository.TimelineFor(userID)
+func (sv TimelineServive) Run(ctx context.Context, userID uuid.UUID) (response []entity.UserPost, err error) {
+	response, err = sv.Repository.TimelineFor(ctx, userID)
 	if err != nil {
 		return response, err
 	}

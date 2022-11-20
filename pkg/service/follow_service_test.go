@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"context"
 	"errors"
 	mock "gosocialgraph/pkg/mock/repository"
 	"gosocialgraph/pkg/service"
@@ -17,14 +18,14 @@ func TestFollowRun(t *testing.T) {
 	to := uuid.New()
 	from := uuid.New()
 
+	ctx := context.Background()
 	repo := mock.NewMockFollower(controller)
-
-	repo.EXPECT().Follow(to.String(), from.String()).Return(nil)
+	repo.EXPECT().Follow(ctx, to.String(), from.String()).Return(nil)
 	sv := service.FollowService{
 		UserRepository: repo,
 	}
 
-	err := sv.Run(to, from)
+	err := sv.Run(ctx, to, from)
 	if err != nil {
 		t.Errorf("Got an error when trying to follow a user. Error: %s", err)
 	}
@@ -37,14 +38,14 @@ func TestFollowFailRun(t *testing.T) {
 	to := uuid.New()
 	from := uuid.New()
 
+	ctx := context.Background()
 	repo := mock.NewMockFollower(controller)
-
-	repo.EXPECT().Follow(to.String(), from.String()).Return(errors.New("Fake error"))
+	repo.EXPECT().Follow(ctx, to.String(), from.String()).Return(errors.New("Fake error"))
 	sv := service.FollowService{
 		UserRepository: repo,
 	}
 
-	err := sv.Run(to, from)
+	err := sv.Run(ctx, to, from)
 	if err == nil {
 		t.Errorf("Expected an error when trying to follow a user. Error: %s", err)
 	}

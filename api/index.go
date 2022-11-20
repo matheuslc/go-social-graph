@@ -1,22 +1,14 @@
 package api
 
 import (
+	"gosocialgraph/pkg/handler"
+	"gosocialgraph/server"
 	"net/http"
 )
 
-// var globalAppcontext handler.AppContext
+func Handler(w http.ResponseWriter, r *http.Request) {
+	appContext := handler.NewAppContext()
+	server.RegisterHandlers(appContext.Router, appContext)
 
-// func init() {
-// 	globalAppcontext = handler.NewAppContext()
-// }
-func HelloWorld(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello World"))
+	appContext.Router.ServeHTTP(w, r)
 }
-
-// func Handler(w http.ResponseWriter, r *http.Request) {
-// 	// appContext := handler.NewAppContext()
-// 	// server.RegisterHandlers(globalAppcontext.Router, globalAppcontext)
-// 	// server.RegisterHandlers(globalAppcontext.Router, globalAppcontext)
-
-// 	// globalAppcontext.Router.ServeHTTP(w, r)
-// }

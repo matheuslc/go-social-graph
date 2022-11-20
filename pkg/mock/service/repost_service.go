@@ -5,6 +5,7 @@
 package mock_service
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,16 +36,16 @@ func (m *MockRepostRunner) EXPECT() *MockRepostRunnerMockRecorder {
 }
 
 // Run mocks base method.
-func (m *MockRepostRunner) Run(userID, parentID uuid.UUID, quote string) (bool, error) {
+func (m *MockRepostRunner) Run(ctx context.Context, userID, parentID uuid.UUID, quote string) (bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Run", userID, parentID, quote)
+	ret := m.ctrl.Call(m, "Run", ctx, userID, parentID, quote)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Run indicates an expected call of Run.
-func (mr *MockRepostRunnerMockRecorder) Run(userID, parentID, quote interface{}) *gomock.Call {
+func (mr *MockRepostRunnerMockRecorder) Run(ctx, userID, parentID, quote interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockRepostRunner)(nil).Run), userID, parentID, quote)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Run", reflect.TypeOf((*MockRepostRunner)(nil).Run), ctx, userID, parentID, quote)
 }

@@ -13,12 +13,12 @@ import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/labstack/echo/v4"
 	middleware "github.com/labstack/echo/v4/middleware"
-	"github.com/neo4j/neo4j-go-driver/neo4j"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
 // AppContext is the application container, where dependencies are defined
 type AppContext struct {
-	Db     *neo4j.Driver
+	Db     *neo4j.DriverWithContext
 	Router *echo.Echo
 	Graph  *p.Graph
 

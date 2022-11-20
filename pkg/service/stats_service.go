@@ -3,6 +3,7 @@ package service
 //go:generate mockgen -source=./stats_service.go -destination=../mock/service/stats_service.go
 
 import (
+	"context"
 	"gosocialgraph/pkg/repository"
 	"sync"
 
@@ -28,11 +29,11 @@ type StatsService struct {
 
 // StatsRunner
 type StatsRunner interface {
-	Run(userID uuid.UUID) (StatsResponse, error)
+	Run(ctx context.Context, userID uuid.UUID) (StatsResponse, error)
 }
 
 // Run executes the usecase
-func (sv StatsService) Run(userID uuid.UUID) (StatsResponse, error) {
+func (sv StatsService) Run(ctx context.Context, userID uuid.UUID) (StatsResponse, error) {
 	var wg sync.WaitGroup
 	var userStats ProfileStats
 	var runningErros []error
@@ -41,7 +42,7 @@ func (sv StatsService) Run(userID uuid.UUID) (StatsResponse, error) {
 
 	go func() {
 		defer wg.Done()
-		followers, err := sv.Repository.CountFollowers(userID)
+		followers, err := sv.Repository.CountFollowers(ctx, userID)
 
 		if err != nil {
 			runningErros = append(runningErros, err)
@@ -52,7 +53,7 @@ func (sv StatsService) Run(userID uuid.UUID) (StatsResponse, error) {
 
 	go func() {
 		defer wg.Done()
-		following, err := sv.Repository.CountFollowing(userID)
+		following, err := sv.Repository.CountFollowing(ctx, userID)
 
 		if err != nil {
 			runningErros = append(runningErros, err)
@@ -63,7 +64,7 @@ func (sv StatsService) Run(userID uuid.UUID) (StatsResponse, error) {
 
 	go func() {
 		defer wg.Done()
-		posts, err := sv.Repository.CountPosts(userID)
+		posts, err := sv.Repository.CountPosts(ctx, userID)
 		if err != nil {
 			runningErros = append(runningErros, err)
 		}
