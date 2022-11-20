@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"context"
 	"errors"
 	"gosocialgraph/pkg/entity"
 	mock_repository "gosocialgraph/pkg/mock/repository"
@@ -25,12 +26,12 @@ func TestFollowingRun(t *testing.T) {
 	userSecondPost := entity.UserPost{User: timelineUser, Post: secondPost}
 
 	posts = append(posts, userPost, userSecondPost)
-
-	repo.EXPECT().TimelineFor(userID).Return(posts, nil)
+	ctx := context.Background()
+	repo.EXPECT().TimelineFor(ctx, userID).Return(posts, nil)
 
 	sv := service.TimelineServive{Repository: repo}
 
-	result, err := sv.Run(userID)
+	result, err := sv.Run(ctx, userID)
 	if err != nil {
 		t.Errorf("Expected a timeline for user. Got error")
 	}
@@ -53,12 +54,12 @@ func TestFollowingFailRun(t *testing.T) {
 	userPost := entity.UserPost{User: timelineUser, Post: firstPost}
 
 	posts = append(posts, userPost)
-
-	repo.EXPECT().TimelineFor(userID).Return(posts, errors.New("Fake error"))
+	ctx := context.Background()
+	repo.EXPECT().TimelineFor(ctx, userID).Return(posts, errors.New("Fake error"))
 
 	sv := service.TimelineServive{Repository: repo}
 
-	_, err := sv.Run(userID)
+	_, err := sv.Run(ctx, userID)
 	if err == nil {
 		t.Errorf("Expected an error for user time")
 	}

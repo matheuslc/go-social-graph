@@ -3,6 +3,7 @@ package service
 //go:generate mockgen -source=./all_service.go -destination=../mock/service/all_service.go
 
 import (
+	"context"
 	"gosocialgraph/pkg/entity"
 	"gosocialgraph/pkg/repository"
 )
@@ -19,12 +20,12 @@ type AllPostResponse struct {
 
 // AllPostRunner defines the contract for the service runner
 type AllPostRunner interface {
-	Run() (AllPostResponse, error)
+	Run(ctx context.Context) (AllPostResponse, error)
 }
 
 // Run defines how the usecase can be executed
-func (sv AllService) Run() (AllPostResponse, error) {
-	response, err := sv.Repository.All()
+func (sv AllService) Run(ctx context.Context) (AllPostResponse, error) {
+	response, err := sv.Repository.All(ctx)
 
 	if err != nil {
 		return AllPostResponse{}, err

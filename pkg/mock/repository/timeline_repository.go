@@ -5,6 +5,7 @@
 package mock_repository
 
 import (
+	context "context"
 	entity "gosocialgraph/pkg/entity"
 	reflect "reflect"
 
@@ -36,46 +37,46 @@ func (m *MockTimelineReader) EXPECT() *MockTimelineReaderMockRecorder {
 }
 
 // All mocks base method.
-func (m *MockTimelineReader) All() ([]entity.UserPost, error) {
+func (m *MockTimelineReader) All(ctx context.Context) ([]entity.UserPost, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "All")
+	ret := m.ctrl.Call(m, "All", ctx)
 	ret0, _ := ret[0].([]entity.UserPost)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // All indicates an expected call of All.
-func (mr *MockTimelineReaderMockRecorder) All() *gomock.Call {
+func (mr *MockTimelineReaderMockRecorder) All(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "All", reflect.TypeOf((*MockTimelineReader)(nil).All))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "All", reflect.TypeOf((*MockTimelineReader)(nil).All), ctx)
 }
 
 // TimelineFor mocks base method.
-func (m *MockTimelineReader) TimelineFor(userID uuid.UUID) ([]entity.UserPost, error) {
+func (m *MockTimelineReader) TimelineFor(ctx context.Context, userID uuid.UUID) ([]entity.UserPost, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "TimelineFor", userID)
+	ret := m.ctrl.Call(m, "TimelineFor", ctx, userID)
 	ret0, _ := ret[0].([]entity.UserPost)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // TimelineFor indicates an expected call of TimelineFor.
-func (mr *MockTimelineReaderMockRecorder) TimelineFor(userID interface{}) *gomock.Call {
+func (mr *MockTimelineReaderMockRecorder) TimelineFor(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TimelineFor", reflect.TypeOf((*MockTimelineReader)(nil).TimelineFor), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TimelineFor", reflect.TypeOf((*MockTimelineReader)(nil).TimelineFor), ctx, userID)
 }
 
 // UserPosts mocks base method.
-func (m *MockTimelineReader) UserPosts(userID uuid.UUID) ([]entity.UserPost, error) {
+func (m *MockTimelineReader) UserPosts(ctx context.Context, userID uuid.UUID) ([]entity.UserPost, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UserPosts", userID)
+	ret := m.ctrl.Call(m, "UserPosts", ctx, userID)
 	ret0, _ := ret[0].([]entity.UserPost)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // UserPosts indicates an expected call of UserPosts.
-func (mr *MockTimelineReaderMockRecorder) UserPosts(userID interface{}) *gomock.Call {
+func (mr *MockTimelineReaderMockRecorder) UserPosts(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserPosts", reflect.TypeOf((*MockTimelineReader)(nil).UserPosts), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserPosts", reflect.TypeOf((*MockTimelineReader)(nil).UserPosts), ctx, userID)
 }

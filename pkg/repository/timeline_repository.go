@@ -3,42 +3,39 @@ package repository
 //go:generate mockgen -source=./timeline_repository.go -destination=../mock/repository/timeline_repository.go
 
 import (
-	"fmt"
+	"context"
 	"gosocialgraph/pkg/entity"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/neo4j/neo4j-go-driver/neo4j"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
 // TimelineRepository defines what the timeline repository must holds
 type TimelineRepository struct {
-	Client neo4j.Driver
+	Client neo4j.DriverWithContext
 }
 
 // TimelineReader defines the read operations for timeline
 type TimelineReader interface {
-	All() ([]entity.UserPost, error)
-	TimelineFor(userID uuid.UUID) ([]entity.UserPost, error)
-	UserPosts(userID uuid.UUID) ([]entity.UserPost, error)
+	All(ctx context.Context) ([]entity.UserPost, error)
+	TimelineFor(ctx context.Context, userID uuid.UUID) ([]entity.UserPost, error)
+	UserPosts(ctx context.Context, userID uuid.UUID) ([]entity.UserPost, error)
 }
 
 // All return all posts and its users from the system
 // You need to take care when using this method, and is perform a whole search
 // into the database. If we start to hold too much data, we should paginate or remove
 // this method.
-func (repo *TimelineRepository) All() ([]entity.UserPost, error) {
+func (repo *TimelineRepository) All(ctx context.Context) ([]entity.UserPost, error) {
 	var list []entity.UserPost
 
-	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
-	if err != nil {
-		return list, fmt.Errorf("could not create a new session for Create query")
-	}
+	session := repo.Client.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	defer session.Close(ctx)
 
-	defer session.Close()
-
-	_, err = session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+	_, err := session.ExecuteRead(ctx, func(transaction neo4j.ManagedTransaction) (interface{}, error) {
 		result, err := transaction.Run(
+			ctx,
 			"MATCH (users:User)-[r:TWEET|REPOST]->(posts)-[ow:OWNS]->(us:User) RETURN posts, r, users, us ORDER BY posts.created_at",
 			map[string]interface{}{},
 		)
@@ -47,7 +44,7 @@ func (repo *TimelineRepository) All() ([]entity.UserPost, error) {
 			return nil, err
 		}
 
-		list, err = dataMapper(result)
+		list, err = dataMapper(ctx, result)
 		if err != nil {
 			return nil, err
 		}
@@ -64,17 +61,14 @@ func (repo *TimelineRepository) All() ([]entity.UserPost, error) {
 
 // TimelineFor generates a timeline for a specific user
 // The timeline contains posts from following users
-func (repo *TimelineRepository) TimelineFor(userID uuid.UUID) ([]entity.UserPost, error) {
+func (repo *TimelineRepository) TimelineFor(ctx context.Context, userID uuid.UUID) ([]entity.UserPost, error) {
 	var list []entity.UserPost
-	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
-	if err != nil {
-		return nil, fmt.Errorf("could not create a new session for Create query")
-	}
+	session := repo.Client.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	defer session.Close(ctx)
 
-	defer session.Close()
-
-	_, err = session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+	_, err := session.ExecuteRead(ctx, func(transaction neo4j.ManagedTransaction) (interface{}, error) {
 		result, err := transaction.Run(
+			ctx,
 			"MATCH (user:User {uuid: $currentUser})-[:FOLLOW]->(followers)-[r:TWEET|REPOST]->(posts:Post)-[ow:OWNS]->(us:User) RETURN posts, r, followers, us ORDER BY posts.created_at",
 			map[string]interface{}{
 				"currentUser": userID.String(),
@@ -85,7 +79,7 @@ func (repo *TimelineRepository) TimelineFor(userID uuid.UUID) ([]entity.UserPost
 			return nil, err
 		}
 
-		list, err = dataMapper(result)
+		list, err = dataMapper(ctx, result)
 		if err != nil {
 			return nil, err
 		}
@@ -101,17 +95,14 @@ func (repo *TimelineRepository) TimelineFor(userID uuid.UUID) ([]entity.UserPost
 }
 
 // UserPosts retuns the posts from an user
-func (repo *TimelineRepository) UserPosts(userID uuid.UUID) ([]entity.UserPost, error) {
+func (repo *TimelineRepository) UserPosts(ctx context.Context, userID uuid.UUID) ([]entity.UserPost, error) {
 	var list []entity.UserPost
-	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
-	if err != nil {
-		return nil, fmt.Errorf("could not create a new session for Create query")
-	}
+	session := repo.Client.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	defer session.Close(ctx)
 
-	defer session.Close()
-
-	_, err = session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+	_, err := session.ExecuteRead(ctx, func(transaction neo4j.ManagedTransaction) (interface{}, error) {
 		result, err := transaction.Run(
+			ctx,
 			"MATCH (user:User {uuid: $currentUser})-[r:TWEET|REPOST]->(posts)-[ow:OWNS]->(us:User) RETURN posts, r, user, us",
 			map[string]interface{}{
 				"currentUser": userID.String(),
@@ -122,7 +113,7 @@ func (repo *TimelineRepository) UserPosts(userID uuid.UUID) ([]entity.UserPost, 
 			return nil, err
 		}
 
-		list, err = dataMapper(result)
+		list, err = dataMapper(ctx, result)
 		if err != nil {
 			return nil, err
 		}
@@ -137,29 +128,30 @@ func (repo *TimelineRepository) UserPosts(userID uuid.UUID) ([]entity.UserPost, 
 	return list, nil
 }
 
-func dataMapper(result neo4j.Result) ([]entity.UserPost, error) {
+func dataMapper(ctx context.Context, result neo4j.ResultWithContext) ([]entity.UserPost, error) {
 	var list []entity.UserPost
 
-	for result.Next() {
-		postRecord := result.Record().GetByIndex(0).(neo4j.Node)
-		relation := result.Record().GetByIndex(1).(neo4j.Relationship)
-		userRecord := result.Record().GetByIndex(2).(neo4j.Node)
+	for result.Next(ctx) {
+		values := result.Record().Values
+		postRecord := values[0].(neo4j.Node)
+		relation := values[1].(neo4j.Relationship)
+		userRecord := values[2].(neo4j.Node)
 
-		postProps := postRecord.Props()
+		postProps := postRecord.Props
 		parsedPost := entity.Post{
 			ID:        uuid.MustParse(postProps["uuid"].(string)),
 			Content:   postProps["content"].(string),
 			CreatedAt: postProps["created_at"].(time.Time),
 		}
 
-		userProps := userRecord.Props()
+		userProps := userRecord.Props
 		postIsFrom := entity.User{
 			ID:       uuid.MustParse(userProps["uuid"].(string)),
 			Username: userProps["username"].(string),
 		}
 
-		if len(relation.Props()) > 0 {
-			props := relation.Props()
+		if len(relation.Props) > 0 {
+			props := relation.Props
 			quote := props["quote"]
 			id := props["uuid"]
 			createdAt := props["created_at"]
@@ -168,8 +160,8 @@ func dataMapper(result neo4j.Result) ([]entity.UserPost, error) {
 				quote = ""
 			}
 
-			userRepost := result.Record().GetByIndex(3).(neo4j.Node)
-			userRepostProps := userRepost.Props()
+			userRepost := values[3].(neo4j.Node)
+			userRepostProps := userRepost.Props
 			repostWithUser := entity.UserPost{
 				User: entity.User{
 					ID:       uuid.MustParse(userRepostProps["uuid"].(string)),

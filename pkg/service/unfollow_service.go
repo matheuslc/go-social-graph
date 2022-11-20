@@ -3,6 +3,7 @@ package service
 //go:generate mockgen -source=./unfollow_service.go -destination=../mock/service/unfollow_service.go
 
 import (
+	"context"
 	"gosocialgraph/pkg/repository"
 
 	"github.com/google/uuid"
@@ -15,10 +16,10 @@ type UnfollowService struct {
 
 // UnfolowRunner
 type UnfolowRunner interface {
-	Run(to, from uuid.UUID) error
+	Run(ctx context.Context, to, from uuid.UUID) error
 }
 
 // Run executes the use case
-func (sv UnfollowService) Run(to, from uuid.UUID) error {
-	return sv.Repository.Unfollow(to.String(), from.String())
+func (sv UnfollowService) Run(ctx context.Context, to, from uuid.UUID) error {
+	return sv.Repository.Unfollow(ctx, to.String(), from.String())
 }

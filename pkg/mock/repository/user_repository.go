@@ -5,6 +5,7 @@
 package mock_repository
 
 import (
+	context "context"
 	entity "gosocialgraph/pkg/entity"
 	reflect "reflect"
 
@@ -36,33 +37,33 @@ func (m *MockUserReader) EXPECT() *MockUserReaderMockRecorder {
 }
 
 // Find mocks base method.
-func (m *MockUserReader) Find(userID uuid.UUID) (entity.User, error) {
+func (m *MockUserReader) Find(ctx context.Context, userID uuid.UUID) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Find", userID)
+	ret := m.ctrl.Call(m, "Find", ctx, userID)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Find indicates an expected call of Find.
-func (mr *MockUserReaderMockRecorder) Find(userID interface{}) *gomock.Call {
+func (mr *MockUserReaderMockRecorder) Find(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockUserReader)(nil).Find), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockUserReader)(nil).Find), ctx, userID)
 }
 
 // FindByUsername mocks base method.
-func (m *MockUserReader) FindByUsername(username string) (entity.User, error) {
+func (m *MockUserReader) FindByUsername(ctx context.Context, username string) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByUsername", username)
+	ret := m.ctrl.Call(m, "FindByUsername", ctx, username)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindByUsername indicates an expected call of FindByUsername.
-func (mr *MockUserReaderMockRecorder) FindByUsername(username interface{}) *gomock.Call {
+func (mr *MockUserReaderMockRecorder) FindByUsername(ctx, username interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUsername", reflect.TypeOf((*MockUserReader)(nil).FindByUsername), username)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUsername", reflect.TypeOf((*MockUserReader)(nil).FindByUsername), ctx, username)
 }
 
 // MockFollower is a mock of Follower interface.
@@ -89,17 +90,17 @@ func (m *MockFollower) EXPECT() *MockFollowerMockRecorder {
 }
 
 // Follow mocks base method.
-func (m *MockFollower) Follow(from, to string) error {
+func (m *MockFollower) Follow(ctx context.Context, from, to string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Follow", from, to)
+	ret := m.ctrl.Call(m, "Follow", ctx, from, to)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Follow indicates an expected call of Follow.
-func (mr *MockFollowerMockRecorder) Follow(from, to interface{}) *gomock.Call {
+func (mr *MockFollowerMockRecorder) Follow(ctx, from, to interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Follow", reflect.TypeOf((*MockFollower)(nil).Follow), from, to)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Follow", reflect.TypeOf((*MockFollower)(nil).Follow), ctx, from, to)
 }
 
 // MockUnfollower is a mock of Unfollower interface.
@@ -126,17 +127,17 @@ func (m *MockUnfollower) EXPECT() *MockUnfollowerMockRecorder {
 }
 
 // Unfollow mocks base method.
-func (m *MockUnfollower) Unfollow(to, from string) error {
+func (m *MockUnfollower) Unfollow(ctx context.Context, to, from string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Unfollow", to, from)
+	ret := m.ctrl.Call(m, "Unfollow", ctx, to, from)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Unfollow indicates an expected call of Unfollow.
-func (mr *MockUnfollowerMockRecorder) Unfollow(to, from interface{}) *gomock.Call {
+func (mr *MockUnfollowerMockRecorder) Unfollow(ctx, to, from interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unfollow", reflect.TypeOf((*MockUnfollower)(nil).Unfollow), to, from)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unfollow", reflect.TypeOf((*MockUnfollower)(nil).Unfollow), ctx, to, from)
 }
 
 // MockCreater is a mock of Creater interface.
@@ -163,18 +164,18 @@ func (m *MockCreater) EXPECT() *MockCreaterMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockCreater) Create(username, email, password string) (entity.User, error) {
+func (m *MockCreater) Create(ctx context.Context, username, email, password string) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", username, email, password)
+	ret := m.ctrl.Call(m, "Create", ctx, username, email, password)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockCreaterMockRecorder) Create(username, email, password interface{}) *gomock.Call {
+func (mr *MockCreaterMockRecorder) Create(ctx, username, email, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCreater)(nil).Create), username, email, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCreater)(nil).Create), ctx, username, email, password)
 }
 
 // MockUserWriter is a mock of UserWriter interface.
@@ -201,46 +202,46 @@ func (m *MockUserWriter) EXPECT() *MockUserWriterMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserWriter) Create(username, email, password string) (entity.User, error) {
+func (m *MockUserWriter) Create(ctx context.Context, username, email, password string) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", username, email, password)
+	ret := m.ctrl.Call(m, "Create", ctx, username, email, password)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockUserWriterMockRecorder) Create(username, email, password interface{}) *gomock.Call {
+func (mr *MockUserWriterMockRecorder) Create(ctx, username, email, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserWriter)(nil).Create), username, email, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserWriter)(nil).Create), ctx, username, email, password)
 }
 
 // Follow mocks base method.
-func (m *MockUserWriter) Follow(from, to string) error {
+func (m *MockUserWriter) Follow(ctx context.Context, from, to string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Follow", from, to)
+	ret := m.ctrl.Call(m, "Follow", ctx, from, to)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Follow indicates an expected call of Follow.
-func (mr *MockUserWriterMockRecorder) Follow(from, to interface{}) *gomock.Call {
+func (mr *MockUserWriterMockRecorder) Follow(ctx, from, to interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Follow", reflect.TypeOf((*MockUserWriter)(nil).Follow), from, to)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Follow", reflect.TypeOf((*MockUserWriter)(nil).Follow), ctx, from, to)
 }
 
 // Unfollow mocks base method.
-func (m *MockUserWriter) Unfollow(to, from string) error {
+func (m *MockUserWriter) Unfollow(ctx context.Context, to, from string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Unfollow", to, from)
+	ret := m.ctrl.Call(m, "Unfollow", ctx, to, from)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Unfollow indicates an expected call of Unfollow.
-func (mr *MockUserWriterMockRecorder) Unfollow(to, from interface{}) *gomock.Call {
+func (mr *MockUserWriterMockRecorder) Unfollow(ctx, to, from interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unfollow", reflect.TypeOf((*MockUserWriter)(nil).Unfollow), to, from)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unfollow", reflect.TypeOf((*MockUserWriter)(nil).Unfollow), ctx, to, from)
 }
 
 // MockUserReaderWriter is a mock of UserReaderWriter interface.
@@ -267,76 +268,76 @@ func (m *MockUserReaderWriter) EXPECT() *MockUserReaderWriterMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserReaderWriter) Create(username, email, password string) (entity.User, error) {
+func (m *MockUserReaderWriter) Create(ctx context.Context, username, email, password string) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", username, email, password)
+	ret := m.ctrl.Call(m, "Create", ctx, username, email, password)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockUserReaderWriterMockRecorder) Create(username, email, password interface{}) *gomock.Call {
+func (mr *MockUserReaderWriterMockRecorder) Create(ctx, username, email, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserReaderWriter)(nil).Create), username, email, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserReaderWriter)(nil).Create), ctx, username, email, password)
 }
 
 // Find mocks base method.
-func (m *MockUserReaderWriter) Find(userID uuid.UUID) (entity.User, error) {
+func (m *MockUserReaderWriter) Find(ctx context.Context, userID uuid.UUID) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Find", userID)
+	ret := m.ctrl.Call(m, "Find", ctx, userID)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Find indicates an expected call of Find.
-func (mr *MockUserReaderWriterMockRecorder) Find(userID interface{}) *gomock.Call {
+func (mr *MockUserReaderWriterMockRecorder) Find(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockUserReaderWriter)(nil).Find), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockUserReaderWriter)(nil).Find), ctx, userID)
 }
 
 // FindByUsername mocks base method.
-func (m *MockUserReaderWriter) FindByUsername(username string) (entity.User, error) {
+func (m *MockUserReaderWriter) FindByUsername(ctx context.Context, username string) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByUsername", username)
+	ret := m.ctrl.Call(m, "FindByUsername", ctx, username)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindByUsername indicates an expected call of FindByUsername.
-func (mr *MockUserReaderWriterMockRecorder) FindByUsername(username interface{}) *gomock.Call {
+func (mr *MockUserReaderWriterMockRecorder) FindByUsername(ctx, username interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUsername", reflect.TypeOf((*MockUserReaderWriter)(nil).FindByUsername), username)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUsername", reflect.TypeOf((*MockUserReaderWriter)(nil).FindByUsername), ctx, username)
 }
 
 // Follow mocks base method.
-func (m *MockUserReaderWriter) Follow(from, to string) error {
+func (m *MockUserReaderWriter) Follow(ctx context.Context, from, to string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Follow", from, to)
+	ret := m.ctrl.Call(m, "Follow", ctx, from, to)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Follow indicates an expected call of Follow.
-func (mr *MockUserReaderWriterMockRecorder) Follow(from, to interface{}) *gomock.Call {
+func (mr *MockUserReaderWriterMockRecorder) Follow(ctx, from, to interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Follow", reflect.TypeOf((*MockUserReaderWriter)(nil).Follow), from, to)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Follow", reflect.TypeOf((*MockUserReaderWriter)(nil).Follow), ctx, from, to)
 }
 
 // Unfollow mocks base method.
-func (m *MockUserReaderWriter) Unfollow(to, from string) error {
+func (m *MockUserReaderWriter) Unfollow(ctx context.Context, to, from string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Unfollow", to, from)
+	ret := m.ctrl.Call(m, "Unfollow", ctx, to, from)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Unfollow indicates an expected call of Unfollow.
-func (mr *MockUserReaderWriterMockRecorder) Unfollow(to, from interface{}) *gomock.Call {
+func (mr *MockUserReaderWriterMockRecorder) Unfollow(ctx, to, from interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unfollow", reflect.TypeOf((*MockUserReaderWriter)(nil).Unfollow), to, from)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unfollow", reflect.TypeOf((*MockUserReaderWriter)(nil).Unfollow), ctx, to, from)
 }
 
 // MockStats is a mock of Stats interface.
@@ -363,46 +364,46 @@ func (m *MockStats) EXPECT() *MockStatsMockRecorder {
 }
 
 // CountFollowers mocks base method.
-func (m *MockStats) CountFollowers(userID uuid.UUID) (int64, error) {
+func (m *MockStats) CountFollowers(ctx context.Context, userID uuid.UUID) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CountFollowers", userID)
+	ret := m.ctrl.Call(m, "CountFollowers", ctx, userID)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CountFollowers indicates an expected call of CountFollowers.
-func (mr *MockStatsMockRecorder) CountFollowers(userID interface{}) *gomock.Call {
+func (mr *MockStatsMockRecorder) CountFollowers(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountFollowers", reflect.TypeOf((*MockStats)(nil).CountFollowers), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountFollowers", reflect.TypeOf((*MockStats)(nil).CountFollowers), ctx, userID)
 }
 
 // CountFollowing mocks base method.
-func (m *MockStats) CountFollowing(userID uuid.UUID) (int64, error) {
+func (m *MockStats) CountFollowing(ctx context.Context, userID uuid.UUID) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CountFollowing", userID)
+	ret := m.ctrl.Call(m, "CountFollowing", ctx, userID)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CountFollowing indicates an expected call of CountFollowing.
-func (mr *MockStatsMockRecorder) CountFollowing(userID interface{}) *gomock.Call {
+func (mr *MockStatsMockRecorder) CountFollowing(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountFollowing", reflect.TypeOf((*MockStats)(nil).CountFollowing), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountFollowing", reflect.TypeOf((*MockStats)(nil).CountFollowing), ctx, userID)
 }
 
 // CountPosts mocks base method.
-func (m *MockStats) CountPosts(userID uuid.UUID) (int64, error) {
+func (m *MockStats) CountPosts(ctx context.Context, userID uuid.UUID) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CountPosts", userID)
+	ret := m.ctrl.Call(m, "CountPosts", ctx, userID)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CountPosts indicates an expected call of CountPosts.
-func (mr *MockStatsMockRecorder) CountPosts(userID interface{}) *gomock.Call {
+func (mr *MockStatsMockRecorder) CountPosts(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountPosts", reflect.TypeOf((*MockStats)(nil).CountPosts), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountPosts", reflect.TypeOf((*MockStats)(nil).CountPosts), ctx, userID)
 }

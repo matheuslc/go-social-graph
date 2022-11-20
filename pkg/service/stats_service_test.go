@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"context"
 	"errors"
 	mock_repository "gosocialgraph/pkg/mock/repository"
 	"gosocialgraph/pkg/service"
@@ -19,13 +20,15 @@ func TestStatsRun(t *testing.T) {
 	expectedPosts := 20
 	expectedFollowing := 100
 
-	repo.EXPECT().CountFollowers(userID).Return(int64(expectedFollowers), nil)
-	repo.EXPECT().CountPosts(userID).Return(int64(expectedPosts), nil)
-	repo.EXPECT().CountFollowing(userID).Return(int64(expectedFollowing), nil)
+	ctx := context.Background()
+
+	repo.EXPECT().CountFollowers(ctx, userID).Return(int64(expectedFollowers), nil)
+	repo.EXPECT().CountPosts(ctx, userID).Return(int64(expectedPosts), nil)
+	repo.EXPECT().CountFollowing(ctx, userID).Return(int64(expectedFollowing), nil)
 
 	sv := service.StatsService{repo}
 
-	result, err := sv.Run(userID)
+	result, err := sv.Run(ctx, userID)
 	if err != nil {
 		t.Errorf("Expected stats from a user. Got an error %s", err)
 	}
@@ -52,14 +55,15 @@ func TestStatsFailRun(t *testing.T) {
 	firstError := errors.New("first error")
 	secondError := errors.New("second error")
 	thirdError := errors.New("third error")
+	ctx := context.Background()
 
-	repo.EXPECT().CountFollowers(userID).Return(int64(0), firstError)
-	repo.EXPECT().CountPosts(userID).Return(int64(0), secondError)
-	repo.EXPECT().CountFollowing(userID).Return(int64(0), thirdError)
+	repo.EXPECT().CountFollowers(ctx, userID).Return(int64(0), firstError)
+	repo.EXPECT().CountPosts(ctx, userID).Return(int64(0), secondError)
+	repo.EXPECT().CountFollowing(ctx, userID).Return(int64(0), thirdError)
 
 	sv := service.StatsService{repo}
 
-	_, err := sv.Run(userID)
+	_, err := sv.Run(ctx, userID)
 	if err == nil {
 		t.Errorf("Expected at least an error. Service executed successfuly")
 	}

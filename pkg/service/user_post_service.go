@@ -3,6 +3,7 @@ package service
 //go:generate mockgen -source=./user_post_service.go -destination=../mock/service/user_post_service.go
 
 import (
+	"context"
 	"gosocialgraph/pkg/entity"
 	"gosocialgraph/pkg/repository"
 
@@ -15,11 +16,11 @@ type UserPostService struct {
 
 // UserPostRunner
 type UserPostRunner interface {
-	Run(userID uuid.UUID) (posts []entity.UserPost, err error)
+	Run(ctx context.Context, userID uuid.UUID) (posts []entity.UserPost, err error)
 }
 
-func (sv UserPostService) Run(userID uuid.UUID) (posts []entity.UserPost, err error) {
-	posts, err = sv.Repository.UserPosts(userID)
+func (sv UserPostService) Run(ctx context.Context, userID uuid.UUID) (posts []entity.UserPost, err error) {
+	posts, err = sv.Repository.UserPosts(ctx, userID)
 
 	if err != nil {
 		return posts, err

@@ -3,17 +3,16 @@ package db
 import (
 	"fmt"
 
-	"github.com/neo4j/neo4j-go-driver/neo4j"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
 // New database
-func New(uri, username, password string) (neo4j.Driver, error) {
-	driver, err := neo4j.NewDriver(uri, neo4j.BasicAuth(username, password, ""), func(c *neo4j.Config) {
-		c.Encrypted = false
-	})
+func New(uri, username, password string) (neo4j.DriverWithContext, error) {
+	auth := neo4j.BasicAuth(username, password, "")
 
+	driver, err := neo4j.NewDriverWithContext(uri, auth)
 	if err != nil {
-		fmt.Printf("Cant connect to Neo4j. Reason: %s", err)
+		panic(fmt.Errorf("Cant connect to Neo4j. Reason: %s", err))
 	}
 
 	return driver, err
@@ -21,5 +20,5 @@ func New(uri, username, password string) (neo4j.Driver, error) {
 
 // Graph
 type Graph struct {
-	Client neo4j.Driver
+	Client neo4j.DriverWithContext
 }

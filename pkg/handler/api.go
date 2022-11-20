@@ -13,7 +13,7 @@ func (c AppContext) LoginHandler(echoContext echo.Context) error {
 	username := echoContext.FormValue("username")
 	passowrd := echoContext.FormValue("password")
 
-	token, refresh, err := c.AuthService.Run(username, passowrd)
+	token, refresh, err := c.AuthService.Run(echoContext.Request().Context(), username, passowrd)
 	if err != nil {
 		return err
 	}
@@ -27,7 +27,7 @@ func (c AppContext) RepostHandler(echoContext echo.Context, id uuid.UUID) error 
 		return err
 	}
 
-	if err := c.RepostService.Run(id, intent.Parent, *intent.Quote); err != nil {
+	if err := c.RepostService.Run(echoContext.Request().Context(), id, intent.Parent, *intent.Quote); err != nil {
 		return err
 	}
 
@@ -44,7 +44,7 @@ func (c AppContext) PostHandler(echoContext echo.Context) error {
 
 	userID := uuid.MustParse(echoContext.Get("userID").(string))
 
-	post, err := c.PostService.Run(userID, intent.Content)
+	post, err := c.PostService.Run(echoContext.Request().Context(), userID, intent.Content)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (c AppContext) PostHandler(echoContext echo.Context) error {
 func (c AppContext) TimelineHandler(echoContext echo.Context) error {
 	userID := uuid.MustParse(echoContext.Get("userID").(string))
 
-	response, err := c.TimelineServive.Run(userID)
+	response, err := c.TimelineServive.Run(echoContext.Request().Context(), userID)
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ func (c AppContext) TimelineHandler(echoContext echo.Context) error {
 
 func (c AppContext) FollowHandler(echoContext echo.Context, from uuid.UUID) error {
 	userID := uuid.MustParse(echoContext.Get("userID").(string))
-	if err := c.FollowService.Run(userID, from); err != nil {
+	if err := c.FollowService.Run(echoContext.Request().Context(), userID, from); err != nil {
 		return err
 	}
 
@@ -91,7 +91,7 @@ func (c AppContext) FollowHandler(echoContext echo.Context, from uuid.UUID) erro
 
 func (c AppContext) UnfollowHandler(echoContext echo.Context, from uuid.UUID) error {
 	userID := uuid.MustParse(echoContext.Get("userID").(string))
-	if err := c.UnfollowService.Run(userID, from); err != nil {
+	if err := c.UnfollowService.Run(echoContext.Request().Context(), userID, from); err != nil {
 		return err
 	}
 
@@ -99,7 +99,7 @@ func (c AppContext) UnfollowHandler(echoContext echo.Context, from uuid.UUID) er
 }
 
 func (c AppContext) ProfileHandler(echoContext echo.Context, userID uuid.UUID) error {
-	response, err := c.ProfileService.Run(userID)
+	response, err := c.ProfileService.Run(echoContext.Request().Context(), userID)
 	if err != nil {
 		return err
 	}
@@ -131,7 +131,7 @@ func (c AppContext) CreateUser(echoContext echo.Context) error {
 	email := echoContext.FormValue("email")
 	password := echoContext.FormValue("password")
 
-	persistedUser, err := c.CreateUserService.Run(username, email, password)
+	persistedUser, err := c.CreateUserService.Run(echoContext.Request().Context(), username, email, password)
 	if err != nil {
 		return err
 	}

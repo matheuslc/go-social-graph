@@ -3,6 +3,7 @@ package service
 //go:generate mockgen -source=./find_user_service.go -destination=../mock/service/find_user_service.go
 
 import (
+	"context"
 	"gosocialgraph/pkg/entity"
 	"gosocialgraph/pkg/repository"
 
@@ -21,12 +22,12 @@ type FindUserService struct {
 
 // FindUserRunner
 type FindUserRunner interface {
-	Run(userID uuid.UUID) (FindUserResponse, error)
+	Run(ctx context.Context, userID uuid.UUID) (FindUserResponse, error)
 }
 
 // Run executes the use case
-func (sv FindUserService) Run(userID uuid.UUID) (FindUserResponse, error) {
-	user, err := sv.UserRepository.Find(userID)
+func (sv FindUserService) Run(ctx context.Context, userID uuid.UUID) (FindUserResponse, error) {
+	user, err := sv.UserRepository.Find(ctx, userID)
 
 	if err != nil {
 		return FindUserResponse{}, err

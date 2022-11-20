@@ -3,6 +3,7 @@ package service
 //go:generate mockgen -source=./follow_service.go -destination=../mock/service/follow_service.go
 
 import (
+	"context"
 	"gosocialgraph/pkg/repository"
 
 	"github.com/google/uuid"
@@ -19,8 +20,8 @@ type FollowRunner interface {
 }
 
 // Run execute the use case
-func (sv *FollowService) Run(to, from uuid.UUID) error {
-	if err := sv.UserRepository.Follow(to.String(), from.String()); err != nil {
+func (sv *FollowService) Run(ctx context.Context, to, from uuid.UUID) error {
+	if err := sv.UserRepository.Follow(ctx, to.String(), from.String()); err != nil {
 		return err
 	}
 
