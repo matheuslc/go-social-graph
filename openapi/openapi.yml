@@ -200,6 +200,7 @@ components:
   securitySchemes:
     bearerAuth:
       type: http
+      description: JWT auth schema
       scheme: bearer
       bearerFormat: JWT
 

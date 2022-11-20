@@ -4,6 +4,7 @@ import (
 	"gosocialgraph/openapi"
 	"gosocialgraph/pkg/handler/rest"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -17,6 +18,20 @@ func (c AppContext) LoginHandler(echoContext echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	tokenCookie := new(http.Cookie)
+	tokenCookie.Name = "access_token"
+	tokenCookie.Value = token
+
+	refreshCookie := new(http.Cookie)
+	refreshCookie.Name = "refresh_token"
+	refreshCookie.Value = refresh
+
+	tokenCookie.Expires = time.Now().Add(240 * time.Hour)
+	refreshCookie.Expires = time.Now().Add(240 * time.Hour)
+
+	echoContext.SetCookie(tokenCookie)
+	echoContext.SetCookie(refreshCookie)
 
 	return echoContext.JSON(http.StatusOK, openapi.LoginResponse{AccessToken: &token, RefreshToken: &refresh})
 }
