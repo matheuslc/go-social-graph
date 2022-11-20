@@ -11,6 +11,10 @@ import (
 
 //go:generate mockgen -source=./login_service.go -destination=../mock/auth/login_service.go
 
+var (
+	ErrWrongUsernameOrPassword = fmt.Errorf("Wrong username or password")
+)
+
 type JwtCustomClaims struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -30,7 +34,7 @@ func (sv AuthService) Run(username string, password string) (string, string, err
 	}
 
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(fmt.Sprintf("%s%s", repository.Salt, password))); err != nil {
-		return "", "", nil
+		return "", "", ErrWrongUsernameOrPassword
 	}
 
 	claims := &JwtCustomClaims{
