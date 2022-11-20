@@ -10,11 +10,13 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/neo4j/neo4j-go-driver v1.8.3
+	github.com/vercel/go-bridge v0.0.0-20221108222652-296f4c6bdb6d
 	golang.org/x/crypto v0.2.0
 )
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
+	github.com/aws/aws-lambda-go v1.35.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/swag v0.21.1 // indirect
