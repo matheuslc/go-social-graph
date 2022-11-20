@@ -38,7 +38,7 @@ type Unfollower interface {
 
 // Creater defines how to create a new user
 type Creater interface {
-	Create(username, password string) (entity.User, error)
+	Create(username, email, password string) (entity.User, error)
 }
 
 // UserWriter compouns a write-only functions interface
@@ -219,7 +219,7 @@ func (repo *UserRepository) Unfollow(to, from string) error {
 }
 
 // Create
-func (repo *UserRepository) Create(username, password string) (entity.User, error) {
+func (repo *UserRepository) Create(username, email, password string) (entity.User, error) {
 	session, err := repo.Client.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return entity.User{}, err
@@ -233,10 +233,11 @@ func (repo *UserRepository) Create(username, password string) (entity.User, erro
 
 	persistedUser, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		result, err := transaction.Run(
-			"CREATE (u:User) SET u.uuid = $uuid, u.username = $username, u.password = $password, u.created_at = datetime($createdAt) RETURN u.uuid, u.username, u.created_at",
+			"CREATE (u:User) SET u.uuid = $uuid, u.username = $username, u.email = $email, u.password = $password, u.created_at = datetime($createdAt) RETURN u.uuid, u.username, u.email, u.created_at",
 			map[string]interface{}{
 				"uuid":      uuid.New().String(),
 				"username":  username,
+				"email":     email,
 				"password":  hashedPassword,
 				"createdAt": time.Now().UTC(),
 			},
@@ -250,7 +251,8 @@ func (repo *UserRepository) Create(username, password string) (entity.User, erro
 			return entity.User{
 				ID:        uuid.MustParse(result.Record().GetByIndex(0).(string)),
 				Username:  result.Record().GetByIndex(1).(string),
-				CreatedAt: result.Record().GetByIndex(2).(time.Time),
+				Email:     result.Record().GetByIndex(2).(string),
+				CreatedAt: result.Record().GetByIndex(3).(time.Time),
 			}, nil
 		}
 

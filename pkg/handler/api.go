@@ -4,6 +4,7 @@ import (
 	"gosocialgraph/openapi"
 	"gosocialgraph/pkg/handler/rest"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -17,6 +18,20 @@ func (c AppContext) LoginHandler(echoContext echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	tokenCookie := new(http.Cookie)
+	tokenCookie.Name = "access_token"
+	tokenCookie.Value = token
+
+	refreshCookie := new(http.Cookie)
+	refreshCookie.Name = "refresh_token"
+	refreshCookie.Value = refresh
+
+	tokenCookie.Expires = time.Now().Add(240 * time.Hour)
+	refreshCookie.Expires = time.Now().Add(240 * time.Hour)
+
+	echoContext.SetCookie(tokenCookie)
+	echoContext.SetCookie(refreshCookie)
 
 	return echoContext.JSON(http.StatusOK, openapi.LoginResponse{AccessToken: &token, RefreshToken: &refresh})
 }
@@ -128,9 +143,10 @@ func (c AppContext) ProfileHandler(echoContext echo.Context, userID uuid.UUID) e
 
 func (c AppContext) CreateUser(echoContext echo.Context) error {
 	username := echoContext.FormValue("username")
+	email := echoContext.FormValue("email")
 	password := echoContext.FormValue("password")
 
-	persistedUser, err := c.CreateUserService.Run(username, password)
+	persistedUser, err := c.CreateUserService.Run(username, email, password)
 	if err != nil {
 		return err
 	}
@@ -139,6 +155,7 @@ func (c AppContext) CreateUser(echoContext echo.Context) error {
 		Id:        persistedUser.ID,
 		CreatedAt: persistedUser.CreatedAt,
 		Username:  persistedUser.Username,
+		Email:     persistedUser.Email,
 	}
 
 	return echoContext.JSON(http.StatusCreated, restResponse)

@@ -163,18 +163,18 @@ func (m *MockCreater) EXPECT() *MockCreaterMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockCreater) Create(username, password string) (entity.User, error) {
+func (m *MockCreater) Create(username, email, password string) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", username, password)
+	ret := m.ctrl.Call(m, "Create", username, email, password)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockCreaterMockRecorder) Create(username, password interface{}) *gomock.Call {
+func (mr *MockCreaterMockRecorder) Create(username, email, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCreater)(nil).Create), username, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCreater)(nil).Create), username, email, password)
 }
 
 // MockUserWriter is a mock of UserWriter interface.
@@ -201,18 +201,18 @@ func (m *MockUserWriter) EXPECT() *MockUserWriterMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserWriter) Create(username, password string) (entity.User, error) {
+func (m *MockUserWriter) Create(username, email, password string) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", username, password)
+	ret := m.ctrl.Call(m, "Create", username, email, password)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockUserWriterMockRecorder) Create(username, password interface{}) *gomock.Call {
+func (mr *MockUserWriterMockRecorder) Create(username, email, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserWriter)(nil).Create), username, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserWriter)(nil).Create), username, email, password)
 }
 
 // Follow mocks base method.
@@ -267,18 +267,18 @@ func (m *MockUserReaderWriter) EXPECT() *MockUserReaderWriterMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockUserReaderWriter) Create(username, password string) (entity.User, error) {
+func (m *MockUserReaderWriter) Create(username, email, password string) (entity.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", username, password)
+	ret := m.ctrl.Call(m, "Create", username, email, password)
 	ret0, _ := ret[0].(entity.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockUserReaderWriterMockRecorder) Create(username, password interface{}) *gomock.Call {
+func (mr *MockUserReaderWriterMockRecorder) Create(username, email, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserReaderWriter)(nil).Create), username, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserReaderWriter)(nil).Create), username, email, password)
 }
 
 // Find mocks base method.

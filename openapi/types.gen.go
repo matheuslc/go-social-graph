@@ -27,6 +27,7 @@ type CreatePostResponse struct {
 // CreateUserResponse defines model for CreateUserResponse.
 type CreateUserResponse struct {
 	CreatedAt time.Time          `json:"created_at"`
+	Email     string             `json:"email"`
 	Id        openapi_types.UUID `json:"id"`
 	Username  string             `json:"username"`
 }
@@ -92,6 +93,7 @@ type LoginHandlerMultipartBody struct {
 
 // CreateUserMultipartBody defines parameters for CreateUser.
 type CreateUserMultipartBody struct {
+	Email    string `json:"email"`
 	Password string `json:"password"`
 	Username string `json:"username"`
 }
