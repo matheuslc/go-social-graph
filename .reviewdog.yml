@@ -19,7 +19,4 @@ runner:
     cmd: unparam $(go list ./... | grep -v /vendor/)
     errorformat:
       - "%f:%l:%c: %m"
-  revive:
-    cmd: revive -config=.revive.toml $(go list ./... | grep -v /vendor/)
-    format: golint
-    level: warning
+
