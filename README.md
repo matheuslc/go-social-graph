@@ -9,6 +9,9 @@ Social graph is a dead simple micro blogging platform. It remembers the old and 
 
 Check the **[ADRs](https://github.com/matheuslc/go-social-graph/tree/main/adrs)** folder to better understand some decisions taken on this project. We track new features and changes through issues. Take a look at the [CONTRIBUTING.md](https://github.com/matheuslc/go-social-graph/blob/main/CONTRIBUTING.md) file to better understand how to contribute.
 
+## API
+The REST API documention is under the folder [openapi/openapi.yml](https://github.com/matheuslc/go-social-graph/blob/main/openapi/openapi.yml). Just import this file to your preferred REST API client.
+
 ## Stack
 * Golang 1.18
 * Neo4j
