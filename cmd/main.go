@@ -24,17 +24,15 @@ func main() {
 
 	go func() {
 		for {
-			select {
-			case <-ctx.Done():
-				fmt.Println("Gracefully shutting down...")
+			<-ctx.Done()
+			fmt.Println("Gracefully shutting down...")
 
-				err := appContext.Router.Shutdown(ctx)
-				if err != nil {
-					panic("could not shutdown")
-				}
-
-				return
+			err := appContext.Router.Shutdown(ctx)
+			if err != nil {
+				panic("could not shutdown")
 			}
+
+			return
 		}
 	}()
 

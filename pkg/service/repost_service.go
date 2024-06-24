@@ -4,6 +4,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"gosocialgraph/pkg/repository"
 
 	"github.com/google/uuid"
@@ -29,6 +30,8 @@ func (sv RepostService) Run(ctx context.Context, userID, parentID uuid.UUID, quo
 	if err := sv.Repository.Repost(ctx, userID.String(), parentID.String(), quote); err != nil {
 		return err
 	}
+
+	fmt.Println("nnaaaaoooo %s", 10)
 
 	return nil
 }

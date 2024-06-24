@@ -18,6 +18,9 @@
 
 build/
 
+# Vendor
+vendor/
+
 # Cov
 profile.cov
 .vercel

@@ -26,8 +26,8 @@ type ProfileService struct {
 
 // Run executes the use case. It will first find the user, than collec stats to show in his profile
 func (sv ProfileService) Run(ctx context.Context, userID uuid.UUID) (ProfileResponse, error) {
-	userFound, err := sv.FindUserService.Run(ctx, userID)
-	stats, err := sv.StatsService.Run(ctx, userID)
+	userFound, _ := sv.FindUserService.Run(ctx, userID)
+	stats, _ := sv.StatsService.Run(ctx, userID)
 	posts, err := sv.UserPostService.Run(ctx, userID)
 
 	if err != nil {
